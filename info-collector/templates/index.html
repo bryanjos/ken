@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}Jobs{% endblock %}
+{% block body %}
+    <ul>
+        {% for job in jobs %}
+            <li>
+                <a href="/jobs/{{job}}">{{job}}</a><a href="/edit/{{job}}">Edit</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="/create">Create Job</a>
+{% endblock %}

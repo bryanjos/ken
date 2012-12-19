@@ -29,7 +29,7 @@ class AbsPlugin:
         return []
 
     def insert_data(self, data):
-        client = riak.RiakClient(port=RIAK_PORT)
+        client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
 
         print data
 

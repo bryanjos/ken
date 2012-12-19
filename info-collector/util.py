@@ -1,10 +1,28 @@
 import riak
 import psycopg2
-from config import RIAK_PORT, POSTGRES_DB_STRING
+from config import RIAK_HOST, RIAK_PORT, POSTGRES_DB_STRING
+
+def get_job(job_name):
+    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
+    bucket = client.bucket('jobs')
+
+    return bucket.get(job_name).get_data()
+
+def save_job(job):
+    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
+    bucket = client.bucket('jobs')
+
+    value = bucket.new(job['name'], data=job)
+    value.store()
+
+def get_jobs():
+    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
+    bucket = client.bucket('jobs')
+    return bucket.get_keys()
 
 
 def get_keys(job_name):
-    client = riak.RiakClient(port=RIAK_PORT)
+    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
     bucket = client.bucket('jobs')
 
     job = bucket.get(job_name).get_data()
