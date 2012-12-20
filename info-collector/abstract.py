@@ -7,6 +7,10 @@ import psycopg2
 from config import *
 
 class AbsPlugin:
+    # a way for a plugin to immediately return results
+    def execute_dynamic(self, job):
+        pass
+
     def execute(self):
         try:
             self.insert_data(self.get_data())

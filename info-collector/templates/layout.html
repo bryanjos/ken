@@ -4,14 +4,25 @@
    <title>{% block title %}{% endblock %}</title>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel=stylesheet type=text/css href="{{url_for('static', filename='css/kube.min.css')}}">
+    <link rel=stylesheet type=text/css href="{{url_for('static', filename='css/main.css')}}">
     {% block css %}{% endblock %}
 </head>
 <body>
-    <div class="container">
-        <div class="page">
-            {% block body %}{% endblock %}
-        </div>
+    <div class="wrapper">
+        <header id="header" class="group">
+            <h1>Info Collector</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/create">Create Job</a></li>
+                </ul>
+            </nav>
+        </header>
+        <hr>
+        {% block body %}{% endblock %}
     </div>
+
     {% block js %}{% endblock %}
 </body>
 </html>

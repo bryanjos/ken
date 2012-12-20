@@ -14,7 +14,8 @@ def request_wants_json():
 def convert_to_json(form):
     return {
         'name':form['name'].strip(),
-        'sources': form['sources'],
+        'sources': form.getlist('sources'),
+        'time': form['time'],
         'location': form['location'].strip(),
         'lat':form['lat'].strip(),
         'lon':form['lon'].strip(),
@@ -38,10 +39,11 @@ def index():
     else:
         return render_template('index.html', jobs=jobs)
 
-@app.route('/create')
+@app.route('/create', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
 
+        print request.form.getlist('sources')
         job = convert_to_json(request.form)
         message = validate_job(job)
 
@@ -57,7 +59,7 @@ def create():
         return render_template('edit.html', sources=sources, job=None)
 
 
-@app.route('/edit/<job_name>')
+@app.route('/edit/<job_name>', methods=['GET', 'POST'])
 def edit(job_name):
     if request.method == 'POST':
 

@@ -1,69 +1,103 @@
 {% extends "layout.html" %}
 {% block title %}Job Editor{% endblock %}
 {% block body %}
-    <form method="POST">
-        {% if not link %}
-
-            <label>Name</label>
-            <input id="name" name="name" type="text" maxlength="250"/>
-
-            <label>Sources</label>
-            <select multiple>
-                {% for source in sources %}
+<form method="POST" class="forms" xmlns="http://www.w3.org/1999/html">
+        <ul>
+        {% if not job %}
+            <li>
+                <label class="bold">Name</label>
+                <input id="name" name="name" type="text" maxlength="250" class="width-100"/>
+            </li>
+            <li>
+                <label class="bold">Sources</label>
+                <select multiple class="width-100" id="sources" name="sources">
+                    {% for source in sources %}
                     <option value="{{source}}">{{source}}</option>
-                {% endfor %}
-            </select>
+                    {% endfor %}
+                </select>
+            </li>
+            <li>
+                <label class="bold">Since</label>
+                <input id="time" name="time" type="text" maxlength="250" class="width-100"/>
+            </li>
+            <li>
+                <label class="bold">Location</label>
+                <input id="location" name="location" type="text" maxlength="250" class="width-100"/>
+            </li>
+            <li>
+                <ul class="multicolumn">
+                    <li class="width-33">
+                        <label class="bold">Latitude</label>
+                        <input id="lat" name="lat" type="text" maxlength="250" class="width-100"/>
+                    </li>
+                    <li class="width-33">
+                        <label class="bold">Longitude</label>
+                        <input id="lon" name="lon" type="text" maxlength="250" class="width-100"/>
+                    </li>
+                    <li class="width-33">
+                        <label class="bold">Distance in miles</label>
+                        <input id="distance" name="distance" type="text" maxlength="250" class="width-100"/>
+                    </li>
 
-            <label>Location</label>
-            <input id="location" name="location" type="text" maxlength="250"/>
-
-            <label>Latitude</label>
-            <input id="lat" name="lat" type="text" maxlength="250"/>
-
-            <label>Longitude</label>
-            <input id="lon" name="lon" type="text" maxlength="250"/>
-
-            <label>Distance in miles</label>
-            <input id="distance" name="distance" type="text" maxlength="250"/>
-
-            <label>Tags</label>
-            <input id="tags" name="tags" type="text" maxlength="250"/>
-            <span class="help-inline margin-bottom-ten">Separate tags by spaces</span>
+                </ul>
+            </li>
+            <li>
+                <label class="bold">Tags</label>
+                <input id="tags" name="tags" type="text" maxlength="250" class="width-100"/>
+                <span class="help-inline margin-bottom-ten">Separate tags by spaces</span>
+            </li>
 
         {% else %}
-
-            <label>Name</label>
-            <input id="name" name="name" type="text" maxlength="250" value="{{job.name}}"/>
-
-            <label>Sources</label>
-            <select multiple>
-                {% for source in sources %}
+            <li>
+                <label class="bold">Name</label>
+                <input id="name" name="name" type="text" maxlength="250" value="{{job.name}}" class="width-100"/>
+            </li>
+            <li>
+                <label class="bold">Sources</label>
+                <select multiple class="width-100">
+                    {% for source in sources %}
                     {% if source in job.sources %}
-                        <option value="{{source}}" selected="selected">{{source}}</option>
+                    <option value="{{source}}" selected="selected">{{source}}</option>
                     {% else %}
-                        <option value="{{source}}">{{source}}</option>
+                    <option value="{{source}}">{{source}}</option>
                     {% endif %}
-                {% endfor %}
-            </select>
+                    {% endfor %}
+                </select>
+            </li>
+            <li>
+                <label class="bold">Since</label>
+                <input id="time" name="time" type="text" maxlength="250" value="{{job.time}}" class="width-100"/>
+            </li>
+            <li>
+                <label class="bold">Location</label>
+                <input id="location" name="location" type="text" maxlength="250" value="{{job.location}}" class="width-100"/>
+            </li>
+            <li>
+                <ul class="multicolumn">
+                    <li class="width-33">
+                        <label class="bold">Latitude</label>
+                        <input id="lat" name="lat" type="text" maxlength="250" value="{{job.lat}}" class="width-100"/>
+                    </li>
+                    <li class="width-33">
+                        <label class="bold">Longitude</label>
+                        <input id="lon" name="lon" type="text" maxlength="250" value="{{job.lon}}" class="width-100"/>
+                    </li>
+                    <li class="width-33">
+                        <label class="bold">Distance in miles</label>
+                        <input id="distance" name="distance" type="text" maxlength="250" value="{{job.distance}}" class="width-100"/>
+                    </li>
 
-            <label>Location</label>
-            <input id="location" name="location" type="text" maxlength="250" value="{{job.location}}"/>
-
-            <label>Latitude</label>
-            <input id="lat" name="lat" type="text" maxlength="250" value="{{job.lat}}"/>
-
-            <label>Longitude</label>
-            <input id="lon" name="lon" type="text" maxlength="250" value="{{job.lon}}"/>
-
-            <label>Distance in miles</label>
-            <input id="distance" name="distance" type="text" maxlength="250" value="{{job.distance}}"/>
-
-            <label>Tags</label>
-            <input id="tags" name="tags" type="text" maxlength="250" value="{{job.tags}}"/>
-            <span class="help-inline margin-bottom-ten">Separate tags by spaces</span>
-
+                </ul>
+            </li>
+            <li>
+                <label class="bold">Tags</label>
+                <input id="tags" name="tags" type="text" maxlength="250" value="{{job.tags}}" class="width-100"/>
+                <span class="help-inline margin-bottom-ten">Separate tags by spaces</span>
+            </li>
         {% endif %}
-        <br/>
-        <input type="submit" value="Save"/>
+        <li>
+            <input type="submit" value="Save" class="btn"/>
+        </li>
+        </ul>
     </form>
     {% endblock %}
