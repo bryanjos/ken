@@ -1,8 +1,12 @@
-from flask import Flask, jsonify, request,render_template, abort, url_for, redirect
-import util
+from flask import Flask, jsonify, request,render_template, abort, url_for, redirect, json
+import datetime
+import jobops
+from processors import simple
 from pluginmanager import list_plugins
 from config import *
 app = Flask(__name__)
+app.config.from_object('config')
+
 
 def request_wants_json():
     best = request.accept_mimetypes\
@@ -11,28 +15,13 @@ def request_wants_json():
            request.accept_mimetypes[best] >\
            request.accept_mimetypes['text/html']
 
-def convert_to_json(form):
-    return {
-        'name':form['name'].strip(),
-        'sources': form.getlist('sources'),
-        'time': form['time'],
-        'location': form['location'].strip(),
-        'lat':form['lat'].strip(),
-        'lon':form['lon'].strip(),
-        'distance':form['distance'].strip(),
-        'tags': form['tags'].strip()
-    }
-
-def validate_job(job):
-    if job['name'] is None or len(job['name']) == 0:
-        return "Name is required"
-
-    return None
-
 
 @app.route("/")
 def index():
-    jobs = util.get_jobs()
+    jobs = jobops.get_jobs()
+
+    for job in jobs:
+        job['time'] = datetime.datetime.fromtimestamp(job['time']).strftime(DATE_FORMAT)
 
     if request_wants_json():
         return jsonify(jobs)
@@ -43,12 +32,15 @@ def index():
 def create():
     if request.method == 'POST':
 
-        print request.form.getlist('sources')
-        job = convert_to_json(request.form)
-        message = validate_job(job)
+        if request_wants_json():
+            job = json.dumps(request.json)
+        else:
+            job = jobops.convert_form_to_job(request.form)
 
-        if validate_job(job) is None:
-            util.save_job(job)
+        message = jobops.validate_job(job)
+
+        if message is None:
+            jobops.save_job(job)
             redirect(url_for('index'))
         else:
             return message
@@ -63,11 +55,15 @@ def create():
 def edit(job_name):
     if request.method == 'POST':
 
-        job = convert_to_json(request.form)
-        message = validate_job(job)
+        if request_wants_json():
+            job = json.dumps(request.json)
+        else:
+            job = jobops.convert_form_to_job(request.form)
 
-        if validate_job(job) is None:
-            util.save_job(job)
+        message = jobops.validate_job(job)
+
+        if message is None:
+            jobops.save_job(job)
             redirect(url_for('index'))
         else:
             return message
@@ -75,18 +71,20 @@ def edit(job_name):
 
     else:
         sources = list_plugins()
-        return render_template('edit.html', sources=sources, job=util.get_job(job_name))
+        job = jobops.get_job(job_name)
+        if job:
+            job['time'] = datetime.datetime.fromtimestamp(job['time']).strftime(DATE_FORMAT)
+
+        return render_template('edit.html', sources=sources, job=job)
 
 @app.route('/jobs/<job_name>')
 def job(job_name):
 
-    results = util.get_keys(job_name)
+    data = jobops.process_job(simple.SimpleProcessor(), jobops.get_job(job_name))
 
-    if results is None:
+    if data is None:
         abort(404)
     else:
-        data = util.get_data(results[0],results[1],results[2],results[3])
-
         if request_wants_json():
             return jsonify(data)
         else:

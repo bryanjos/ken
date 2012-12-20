@@ -5,7 +5,7 @@
 # The documentation string in the plugin class will be used to
 # print the help of the plugin.
 
-from abstract import AbsPlugin
+from abstractplugin import AbsPlugin
 import requests
 import time
 

@@ -7,9 +7,6 @@ import psycopg2
 from config import *
 
 class AbsPlugin:
-    # a way for a plugin to immediately return results
-    def execute_dynamic(self, job):
-        pass
 
     def execute(self):
         try:
@@ -33,10 +30,6 @@ class AbsPlugin:
         return []
 
     def insert_data(self, data):
-        client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
-
-        print data
-
         conn = psycopg2.connect(POSTGRES_DB_STRING)
         cur = conn.cursor()
         cur.executemany("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
@@ -46,6 +39,8 @@ class AbsPlugin:
         conn.commit()
         cur.close()
         conn.close()
+
+        client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
 
         for item in data:
 
