@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="ivy-report.xsl"?>
+<ivy-report version="1.0">
+	<info
+		organisation="com.geocent"
+		module="collector_2.10"
+		revision="0.1"
+		conf="runtime-internal"
+		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom"
+		date="20121222150535"/>
+	<dependencies>
+		<module organisation="com.basho.riak" name="riak-client">
+			<revision name="1.0.6" status="release" pubdate="20121014032254" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="https://github.com/basho/riak-java-client" downloaded="true" searched="true" default="false" conf="default(compile), default, compile, runtime, master" position="11">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="successful" details="" size="13263" time="359" location="/Users/bryanjos/.ivy2/cache/com.basho.riak/riak-client/ivy-1.0.6.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/com.basho.riak/riak-client/ivy-1.0.6.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/com/basho/riak/riak-client/1.0.6/riak-client-1.0.6.pom"/>
+				<caller organisation="com.geocent" name="collector_2.10" conf="optional, compile, runtime, runtime-internal" rev="1.0.6" rev-constraint-default="1.0.6" rev-constraint-dynamic="1.0.6" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="riak-client" type="jar" ext="jar" status="successful" details="" size="521238" time="758" location="/Users/bryanjos/.ivy2/cache/com.basho.riak/riak-client/jars/riak-client-1.0.6.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/com/basho/riak/riak-client/1.0.6/riak-client-1.0.6.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.basho.riak.protobuf" name="riak-pb">
+			<revision name="1.2" status="release" pubdate="20121014032317" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="https://github.com/basho/riak_pb" downloaded="true" searched="true" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="19">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="successful" details="" size="8805" time="378" location="/Users/bryanjos/.ivy2/cache/com.basho.riak.protobuf/riak-pb/ivy-1.2.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/com.basho.riak.protobuf/riak-pb/ivy-1.2.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/com/basho/riak/protobuf/riak-pb/1.2/riak-pb-1.2.pom"/>
+				<caller organisation="com.basho.riak" name="riak-client" conf="default, compile, runtime, master" rev="1.2" rev-constraint-default="1.2" rev-constraint-dynamic="1.2" callerrev="1.0.6"/>
+				<artifacts>
+					<artifact name="riak-pb" type="jar" ext="jar" status="successful" details="" size="242718" time="441" location="/Users/bryanjos/.ivy2/cache/com.basho.riak.protobuf/riak-pb/jars/riak-pb-1.2.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/com/basho/riak/protobuf/riak-pb/1.2/riak-pb-1.2.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.google.protobuf" name="protobuf-java">
+			<revision name="2.4.1" status="release" pubdate="20121011024452" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://code.google.com/p/protobuf" downloaded="true" searched="true" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="21">
+				<license name="New BSD license" url="http://www.opensource.org/licenses/bsd-license.php"/>
+				<metadata-artifact status="successful" details="" size="7309" time="308" location="/Users/bryanjos/.ivy2/cache/com.google.protobuf/protobuf-java/ivy-2.4.1.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/com.google.protobuf/protobuf-java/ivy-2.4.1.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/com/google/protobuf/protobuf-java/2.4.1/protobuf-java-2.4.1.pom"/>
+				<caller organisation="com.basho.riak" name="riak-client" conf="default, compile, runtime, master" rev="2.4.1" rev-constraint-default="2.4.1" rev-constraint-dynamic="2.4.1" callerrev="1.0.6"/>
+				<caller organisation="com.basho.riak.protobuf" name="riak-pb" conf="compile, runtime" rev="2.4.1" rev-constraint-default="2.4.1" rev-constraint-dynamic="2.4.1" callerrev="1.2"/>
+				<artifacts>
+					<artifact name="protobuf-java" type="jar" ext="jar" status="successful" details="" size="450279" time="784" location="/Users/bryanjos/.ivy2/cache/com.google.protobuf/protobuf-java/jars/protobuf-java-2.4.1.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/com/google/protobuf/protobuf-java/2.4.1/protobuf-java-2.4.1.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.hamcrest" name="hamcrest-all">
+			<revision name="1.1" status="release" pubdate="20121011104336" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="" downloaded="true" searched="true" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="20">
+				<metadata-artifact status="successful" details="" size="479" time="270" location="/Users/bryanjos/.ivy2/cache/org.hamcrest/hamcrest-all/ivy-1.1.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/org.hamcrest/hamcrest-all/ivy-1.1.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/hamcrest/hamcrest-all/1.1/hamcrest-all-1.1.pom"/>
+				<caller organisation="com.basho.riak.protobuf" name="riak-pb" conf="compile, runtime" rev="1.1" rev-constraint-default="1.1" rev-constraint-dynamic="1.1" callerrev="1.2"/>
+				<artifacts>
+					<artifact name="hamcrest-all" type="jar" ext="jar" status="successful" details="" size="541839" time="604" location="/Users/bryanjos/.ivy2/cache/org.hamcrest/hamcrest-all/jars/hamcrest-all-1.1.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/hamcrest/hamcrest-all/1.1/hamcrest-all-1.1.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.json" name="json">
+			<revision name="20090211" status="release" pubdate="20121011090620" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://www.json.org/java/index.html" downloaded="true" searched="true" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="18">
+				<license name="provided without support or warranty" url="http://www.json.org/license.html"/>
+				<metadata-artifact status="successful" details="" size="1428" time="268" location="/Users/bryanjos/.ivy2/cache/org.json/json/ivy-20090211.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/org.json/json/ivy-20090211.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/json/json/20090211/json-20090211.pom"/>
+				<caller organisation="com.basho.riak" name="riak-client" conf="default, compile, runtime, master" rev="20090211" rev-constraint-default="20090211" rev-constraint-dynamic="20090211" callerrev="1.0.6"/>
+				<artifacts>
+					<artifact name="json" type="jar" ext="jar" status="successful" details="" size="45944" time="287" location="/Users/bryanjos/.ivy2/cache/org.json/json/jars/json-20090211.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/json/json/20090211/json-20090211.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.codehaus.jackson" name="jackson-mapper-asl">
+			<revision name="1.9.2" status="release" pubdate="20121011073622" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://jackson.codehaus.org" downloaded="true" searched="true" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="17">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="successful" details="" size="1242" time="265" location="/Users/bryanjos/.ivy2/cache/org.codehaus.jackson/jackson-mapper-asl/ivy-1.9.2.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/org.codehaus.jackson/jackson-mapper-asl/ivy-1.9.2.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/codehaus/jackson/jackson-mapper-asl/1.9.2/jackson-mapper-asl-1.9.2.pom"/>
+				<caller organisation="com.basho.riak" name="riak-client" conf="default, compile, runtime, master" rev="1.9.2" rev-constraint-default="1.9.2" rev-constraint-dynamic="1.9.2" callerrev="1.0.6"/>
+				<artifacts>
+					<artifact name="jackson-mapper-asl" type="jar" ext="jar" status="successful" details="" size="765648" time="636" location="/Users/bryanjos/.ivy2/cache/org.codehaus.jackson/jackson-mapper-asl/jars/jackson-mapper-asl-1.9.2.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/codehaus/jackson/jackson-mapper-asl/1.9.2/jackson-mapper-asl-1.9.2.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.codehaus.jackson" name="jackson-core-asl">
+			<revision name="1.9.2" status="release" pubdate="20121011073620" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://jackson.codehaus.org" downloaded="true" searched="true" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="16">
+				<license name="The Apache Software License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="successful" details="" size="1016" time="339" location="/Users/bryanjos/.ivy2/cache/org.codehaus.jackson/jackson-core-asl/ivy-1.9.2.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/org.codehaus.jackson/jackson-core-asl/ivy-1.9.2.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/codehaus/jackson/jackson-core-asl/1.9.2/jackson-core-asl-1.9.2.pom"/>
+				<caller organisation="org.codehaus.jackson" name="jackson-mapper-asl" conf="compile, runtime" rev="1.9.2" rev-constraint-default="1.9.2" rev-constraint-dynamic="1.9.2" callerrev="1.9.2"/>
+				<caller organisation="com.basho.riak" name="riak-client" conf="default, compile, runtime, master" rev="1.9.2" rev-constraint-default="1.9.2" rev-constraint-dynamic="1.9.2" callerrev="1.0.6"/>
+				<artifacts>
+					<artifact name="jackson-core-asl" type="jar" ext="jar" status="successful" details="" size="228286" time="395" location="/Users/bryanjos/.ivy2/cache/org.codehaus.jackson/jackson-core-asl/jars/jackson-core-asl-1.9.2.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/codehaus/jackson/jackson-core-asl/1.9.2/jackson-core-asl-1.9.2.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.httpcomponents" name="httpclient">
+			<revision name="4.1.1" status="release" pubdate="20121011074815" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://hc.apache.org/httpcomponents-client" downloaded="true" searched="true" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="12">
+				<metadata-artifact status="successful" details="" size="5990" time="294" location="/Users/bryanjos/.ivy2/cache/org.apache.httpcomponents/httpclient/ivy-4.1.1.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/org.apache.httpcomponents/httpclient/ivy-4.1.1.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/apache/httpcomponents/httpclient/4.1.1/httpclient-4.1.1.pom"/>
+				<caller organisation="com.basho.riak" name="riak-client" conf="default, compile, runtime, master" rev="4.1.1" rev-constraint-default="4.1.1" rev-constraint-dynamic="4.1.1" callerrev="1.0.6"/>
+				<artifacts>
+					<artifact name="httpclient" type="jar" ext="jar" status="successful" details="" size="351132" time="549" location="/Users/bryanjos/.ivy2/cache/org.apache.httpcomponents/httpclient/jars/httpclient-4.1.1.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/apache/httpcomponents/httpclient/4.1.1/httpclient-4.1.1.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="commons-codec" name="commons-codec">
+			<revision name="1.4" status="release" pubdate="20121011024425" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://commons.apache.org/codec/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="15">
+				<metadata-artifact status="no" details="" size="4984" time="0" location="/Users/bryanjos/.ivy2/cache/commons-codec/commons-codec/ivy-1.4.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/commons-codec/commons-codec/1.4/commons-codec-1.4.pom"/>
+				<caller organisation="org.apache.httpcomponents" name="httpclient" conf="compile, runtime" rev="1.4" rev-constraint-default="1.4" rev-constraint-dynamic="1.4" callerrev="4.1.1"/>
+				<artifacts>
+					<artifact name="commons-codec" type="jar" ext="jar" status="no" details="" size="58160" time="0" location="/Users/bryanjos/.ivy2/cache/commons-codec/commons-codec/jars/commons-codec-1.4.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/commons-codec/commons-codec/1.4/commons-codec-1.4.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="commons-logging" name="commons-logging">
+			<revision name="1.1.1" status="release" pubdate="20121011023535" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://commons.apache.org/logging" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="14">
+				<metadata-artifact status="no" details="" size="3941" time="0" location="/Users/bryanjos/.ivy2/cache/commons-logging/commons-logging/ivy-1.1.1.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.pom"/>
+				<caller organisation="org.apache.httpcomponents" name="httpclient" conf="compile, runtime" rev="1.1.1" rev-constraint-default="1.1.1" rev-constraint-dynamic="1.1.1" callerrev="4.1.1"/>
+				<artifacts>
+					<artifact name="commons-logging" type="jar" ext="jar" status="no" details="" size="60686" time="0" location="/Users/bryanjos/.ivy2/cache/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.apache.httpcomponents" name="httpcore">
+			<revision name="4.1" status="release" pubdate="20121011024505" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://hc.apache.org/httpcomponents-core-ga/" downloaded="true" searched="true" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="13">
+				<metadata-artifact status="successful" details="" size="8358" time="302" location="/Users/bryanjos/.ivy2/cache/org.apache.httpcomponents/httpcore/ivy-4.1.xml" searched="true" original-local-location="/Users/bryanjos/.ivy2/cache/org.apache.httpcomponents/httpcore/ivy-4.1.xml.original" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/apache/httpcomponents/httpcore/4.1/httpcore-4.1.pom"/>
+				<caller organisation="org.apache.httpcomponents" name="httpclient" conf="compile, runtime" rev="4.1" rev-constraint-default="4.1" rev-constraint-dynamic="4.1" callerrev="4.1.1"/>
+				<artifacts>
+					<artifact name="httpcore" type="jar" ext="jar" status="successful" details="" size="181041" time="608" location="/Users/bryanjos/.ivy2/cache/org.apache.httpcomponents/httpcore/jars/httpcore-4.1.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/apache/httpcomponents/httpcore/4.1/httpcore-4.1.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="io.spray" name="spray-json_2.10.0-RC5">
+			<revision name="1.2.3" status="release" pubdate="20121219070049" resolver="Spray Repository" artresolver="Spray Repository" homepage="https://github.com/spray/spray-json" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="8">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2856" time="0" location="/Users/bryanjos/.ivy2/cache/io.spray/spray-json_2.10.0-RC5/ivy-1.2.3.xml" searched="false" origin-is-local="false" origin-location="http://repo.spray.io/io/spray/spray-json_2.10.0-RC5/1.2.3/spray-json_2.10.0-RC5-1.2.3.pom"/>
+				<caller organisation="com.geocent" name="collector_2.10" conf="optional, compile, runtime, runtime-internal" rev="1.2.3" rev-constraint-default="1.2.3" rev-constraint-dynamic="1.2.3" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="spray-json_2.10.0-RC5" type="jar" ext="jar" status="no" details="" size="270145" time="0" location="/Users/bryanjos/.ivy2/cache/io.spray/spray-json_2.10.0-RC5/jars/spray-json_2.10.0-RC5-1.2.3.jar">
+						<origin-location is-local="false" location="http://repo.spray.io/io/spray/spray-json_2.10.0-RC5/1.2.3/spray-json_2.10.0-RC5-1.2.3.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.parboiled" name="parboiled-scala_2.10.0-RC5">
+			<revision name="1.1.4" status="release" pubdate="20121219095801" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://parboiled.org" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="9">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2966" time="0" location="/Users/bryanjos/.ivy2/cache/org.parboiled/parboiled-scala_2.10.0-RC5/ivy-1.1.4.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/parboiled/parboiled-scala_2.10.0-RC5/1.1.4/parboiled-scala_2.10.0-RC5-1.1.4.pom"/>
+				<caller organisation="io.spray" name="spray-json_2.10.0-RC5" conf="default, compile, runtime, master" rev="1.1.4" rev-constraint-default="1.1.4" rev-constraint-dynamic="1.1.4" callerrev="1.2.3"/>
+				<artifacts>
+					<artifact name="parboiled-scala_2.10.0-RC5" type="jar" ext="jar" status="no" details="" size="237911" time="0" location="/Users/bryanjos/.ivy2/cache/org.parboiled/parboiled-scala_2.10.0-RC5/jars/parboiled-scala_2.10.0-RC5-1.1.4.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/parboiled/parboiled-scala_2.10.0-RC5/1.1.4/parboiled-scala_2.10.0-RC5-1.1.4.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.parboiled" name="parboiled-core">
+			<revision name="1.1.4" status="release" pubdate="20121128105941" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://parboiled.org" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="10">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2657" time="0" location="/Users/bryanjos/.ivy2/cache/org.parboiled/parboiled-core/ivy-1.1.4.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/parboiled/parboiled-core/1.1.4/parboiled-core-1.1.4.pom"/>
+				<caller organisation="org.parboiled" name="parboiled-scala_2.10.0-RC5" conf="compile, runtime" rev="1.1.4" rev-constraint-default="1.1.4" rev-constraint-dynamic="1.1.4" callerrev="1.1.4"/>
+				<artifacts>
+					<artifact name="parboiled-core" type="jar" ext="jar" status="no" details="" size="184943" time="0" location="/Users/bryanjos/.ivy2/cache/org.parboiled/parboiled-core/jars/parboiled-core-1.1.4.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/parboiled/parboiled-core/1.1.4/parboiled-core-1.1.4.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe.akka" name="akka-actor_2.10.0-RC5">
+			<revision name="2.1.0-RC6" status="release" pubdate="20121215015552" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://akka.io" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="7">
+				<license name="Apache 2" url="http://www.apache.org/licenses/LICENSE-2.0.txt"/>
+				<metadata-artifact status="no" details="" size="2661" time="0" location="/Users/bryanjos/.ivy2/cache/com.typesafe.akka/akka-actor_2.10.0-RC5/ivy-2.1.0-RC6.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/com/typesafe/akka/akka-actor_2.10.0-RC5/2.1.0-RC6/akka-actor_2.10.0-RC5-2.1.0-RC6.pom"/>
+				<caller organisation="com.geocent" name="collector_2.10" conf="optional, compile, runtime, runtime-internal" rev="2.1.0-RC6" rev-constraint-default="2.1.0-RC6" rev-constraint-dynamic="2.1.0-RC6" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="akka-actor_2.10.0-RC5" type="bundle" ext="jar" status="no" details="" size="1891312" time="0" location="/Users/bryanjos/.ivy2/cache/com.typesafe.akka/akka-actor_2.10.0-RC5/bundles/akka-actor_2.10.0-RC5-2.1.0-RC6.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/com/typesafe/akka/akka-actor_2.10.0-RC5/2.1.0-RC6/akka-actor_2.10.0-RC5-2.1.0-RC6.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="postgresql" name="postgresql">
+			<revision name="9.1-901-1.jdbc4" status="release" pubdate="20121011024550" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://jdbc.postgresql.org" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="6">
+				<license name="BSD License" url="http://jdbc.postgresql.org/license.html"/>
+				<metadata-artifact status="no" details="" size="2351" time="0" location="/Users/bryanjos/.ivy2/cache/postgresql/postgresql/ivy-9.1-901-1.jdbc4.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.pom"/>
+				<caller organisation="com.geocent" name="collector_2.10" conf="optional, compile, runtime, runtime-internal" rev="9.1-901-1.jdbc4" rev-constraint-default="9.1-901-1.jdbc4" rev-constraint-dynamic="9.1-901-1.jdbc4" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="postgresql" type="jar" ext="jar" status="no" details="" size="551290" time="0" location="/Users/bryanjos/.ivy2/cache/postgresql/postgresql/jars/postgresql-9.1-901-1.jdbc4.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/postgresql/postgresql/9.1-901-1.jdbc4/postgresql-9.1-901-1.jdbc4.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-compiler">
+			<revision name="2.10.0-RC5" status="release" pubdate="20121205174235" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="4">
+				<license name="BSD-like" url="http://www.scala-lang.org/downloads/license.html    "/>
+				<metadata-artifact status="no" details="" size="2825" time="0" location="/Users/bryanjos/.ivy2/cache/org.scala-lang/scala-compiler/ivy-2.10.0-RC5.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.10.0-RC5/scala-compiler-2.10.0-RC5.pom"/>
+				<caller organisation="com.typesafe" name="slick_2.10.0-RC1" conf="default, compile, runtime, master" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC1" callerrev="0.11.2"/>
+				<artifacts>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-reflect">
+			<revision name="2.10.0-RC5" status="release" pubdate="20121205173642" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="5">
+				<license name="BSD-like" url="http://www.scala-lang.org/downloads/license.html    "/>
+				<metadata-artifact status="no" details="" size="2560" time="0" location="/Users/bryanjos/.ivy2/cache/org.scala-lang/scala-reflect/ivy-2.10.0-RC5.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.10.0-RC5/scala-reflect-2.10.0-RC5.pom"/>
+				<caller organisation="org.scala-lang" name="scala-compiler" conf="compile, runtime" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC5" callerrev="2.10.0-RC5"/>
+				<artifacts>
+					<artifact name="scala-reflect" type="jar" ext="jar" status="no" details="" size="3149337" time="0" location="/Users/bryanjos/.ivy2/cache/org.scala-lang/scala-reflect/jars/scala-reflect-2.10.0-RC5.jar">
+						<origin-location is-local="false" location="http://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.10.0-RC5/scala-reflect-2.10.0-RC5.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe" name="slick_2.10.0-RC1">
+			<revision name="0.11.2" status="release" pubdate="20121026023334" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="http://slick.typesafe.com" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, runtime, master" position="2">
+				<license name="Two-clause BSD-style license" url="http://github.com/slick/slick/blob/master/LICENSE.txt"/>
+				<metadata-artifact status="no" details="" size="2854" time="0" location="/Users/bryanjos/.ivy2/cache/com.typesafe/slick_2.10.0-RC1/ivy-0.11.2.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/com/typesafe/slick_2.10.0-RC1/0.11.2/slick_2.10.0-RC1-0.11.2.pom"/>
+				<caller organisation="com.geocent" name="collector_2.10" conf="optional, compile, runtime, runtime-internal" rev="0.11.2" rev-constraint-default="0.11.2" rev-constraint-dynamic="0.11.2" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="slick_2.10.0-RC1" type="jar" ext="jar" status="no" details="" size="2740703" time="0" location="/Users/bryanjos/.ivy2/cache/com.typesafe/slick_2.10.0-RC1/jars/slick_2.10.0-RC1-0.11.2.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/com/typesafe/slick_2.10.0-RC1/0.11.2/slick_2.10.0-RC1-0.11.2.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.slf4j" name="slf4j-api">
+			<revision name="1.6.4" status="release" pubdate="20121011023657" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.slf4j.org" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="3">
+				<metadata-artifact status="no" details="" size="4338" time="0" location="/Users/bryanjos/.ivy2/cache/org.slf4j/slf4j-api/ivy-1.6.4.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.pom"/>
+				<caller organisation="com.typesafe" name="slick_2.10.0-RC1" conf="default, compile, runtime, master" rev="1.6.4" rev-constraint-default="1.6.4" rev-constraint-dynamic="1.6.4" callerrev="0.11.2"/>
+				<artifacts>
+					<artifact name="slf4j-api" type="jar" ext="jar" status="no" details="" size="25962" time="0" location="/Users/bryanjos/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.4.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/org/slf4j/slf4j-api/1.6.4/slf4j-api-1.6.4.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="com.typesafe" name="config">
+			<revision name="1.0.0" status="release" pubdate="20121015203710" resolver="Typesafe Repository (releases)" artresolver="Typesafe Repository (releases)" homepage="https://github.com/typesafehub/config" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, master(*), compile(*), runtime, runtime(*), master" position="1">
+				<license name="Apache License, Version 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+				<metadata-artifact status="no" details="" size="2725" time="0" location="/Users/bryanjos/.ivy2/cache/com.typesafe/config/ivy-1.0.0.xml" searched="false" origin-is-local="false" origin-location="http://repo.typesafe.com/typesafe/releases/com/typesafe/config/1.0.0/config-1.0.0.pom"/>
+				<caller organisation="com.typesafe.akka" name="akka-actor_2.10.0-RC5" conf="default, compile, runtime, master" rev="1.0.0" rev-constraint-default="1.0.0" rev-constraint-dynamic="1.0.0" callerrev="2.1.0-RC6"/>
+				<caller organisation="com.geocent" name="collector_2.10" conf="optional, compile, runtime, runtime-internal" rev="1.0.0" rev-constraint-default="1.0.0" rev-constraint-dynamic="1.0.0" callerrev="0.1"/>
+				<artifacts>
+					<artifact name="config" type="bundle" ext="jar" status="no" details="" size="185676" time="0" location="/Users/bryanjos/.ivy2/cache/com.typesafe/config/bundles/config-1.0.0.jar">
+						<origin-location is-local="false" location="http://repo.typesafe.com/typesafe/releases/com/typesafe/config/1.0.0/config-1.0.0.jar"/>
+					</artifact>
+				</artifacts>
+			</revision>
+		</module>
+		<module organisation="org.scala-lang" name="scala-library">
+			<revision name="2.10.0-RC5" status="release" pubdate="20121205173202" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://www.scala-lang.org/" downloaded="false" searched="false" default="false" conf="default(compile), default, compile, master(*), compile(*), runtime, runtime(*), master" position="0">
+				<license name="BSD-like" url="http://www.scala-lang.org/downloads/license.html          "/>
+				<metadata-artifact status="no" details="" size="2396" time="0" location="/Users/bryanjos/.ivy2/cache/org.scala-lang/scala-library/ivy-2.10.0-RC5.xml" searched="false" origin-is-local="false" origin-location="http://repo1.maven.org/maven2/org/scala-lang/scala-library/2.10.0-RC5/scala-library-2.10.0-RC5.pom"/>
+				<caller organisation="com.typesafe.akka" name="akka-actor_2.10.0-RC5" conf="default, compile, runtime, master" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC5" callerrev="2.1.0-RC6"/>
+				<caller organisation="org.parboiled" name="parboiled-scala_2.10.0-RC5" conf="compile, runtime" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC5" callerrev="1.1.4"/>
+				<caller organisation="org.scala-lang" name="scala-compiler" conf="compile, runtime" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC5" callerrev="2.10.0-RC5"/>
+				<caller organisation="com.geocent" name="collector_2.10" conf="optional, compile, runtime, runtime-internal" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC5" callerrev="0.1"/>
+				<caller organisation="io.spray" name="spray-json_2.10.0-RC5" conf="default, compile, runtime, master" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC5" callerrev="1.2.3"/>
+				<caller organisation="com.typesafe" name="slick_2.10.0-RC1" conf="default, compile, runtime, master" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC1" callerrev="0.11.2"/>
+				<caller organisation="org.scala-lang" name="scala-reflect" conf="compile, runtime" rev="2.10.0-RC5" rev-constraint-default="2.10.0-RC5" rev-constraint-dynamic="2.10.0-RC5" callerrev="2.10.0-RC5"/>
+				<artifacts>
+				</artifacts>
+			</revision>
+		</module>
+	</dependencies>
+</ivy-report>

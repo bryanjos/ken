@@ -4,13 +4,20 @@ import sys
 import datetime
 import riak
 import psycopg2
+import psycopg2.extensions
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 from config import *
+from jobops import *
+from nltk.tokenize import word_tokenize, sent_tokenize
 
 class AbsPlugin:
 
-    def execute(self):
+    def execute(self, task_queue, name):
         try:
-            self.insert_data(self.get_data())
+            jobs = get_jobs()
+            for job in jobs:
+                self.insert_data(self.get_data(job))
         except:
             print "Unexpected error:", sys.exc_info()[0]
             client = riak.RiakClient(port=RIAK_PORT)
@@ -23,13 +30,14 @@ class AbsPlugin:
                 value = bucket.new(str(now), data={'time': str(now), 'value':sys.exc_info()[0]})
                 value.store()
 
+        task_queue.put(name)
 
 
-    #must override
-    def get_data(self):
-        return []
 
-    def insert_data(self, data):
+    def get_data(self, job):
+        raise NotImplementedError()
+
+    def insert_data(self,data):
         conn = psycopg2.connect(POSTGRES_DB_STRING)
         cur = conn.cursor()
         cur.executemany("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
@@ -41,42 +49,19 @@ class AbsPlugin:
         conn.close()
 
         client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
+        bucket = client.bucket('words')
+        if bucket.search_enabled() is False:
+            bucket.enable_search()
 
         for item in data:
 
-            bucket = client.bucket('source')
-            if bucket.search_enabled() is False:
-                bucket.enable_search()
+            for sentence in sent_tokenize(item.data):
+                for word in word_tokenize(sentence):
+                    data = bucket.get(word).get_data()
+                    if data is None:
+                        data = {'id': item['id'], 'word':word, 'ids': [item['id']]}
+                    else:
+                        data['ids'].append(item['id'])
 
-            value = bucket.new(item['id'], data={'id': item['id'], 'value':item['source'].lower()})
-            value.store()
-
-            bucket = client.bucket('creator')
-            if bucket.search_enabled() is False:
-                bucket.enable_search()
-
-            value = bucket.new(item['id'], data={'id': item['id'], 'value':item['creator'].lower()})
-            value.store()
-
-
-            bucket = client.bucket('time')
-            if bucket.search_enabled() is False:
-                bucket.enable_search()
-
-            value = bucket.new(item['id'], data={'id': item['id'], 'value':item['time']})
-            value.store()
-
-            if len(item['location']) > 0:
-                bucket = client.bucket('location')
-                if bucket.search_enabled() is False:
-                    bucket.enable_search()
-
-                value = bucket.new(item['id'], data={'id': item['id'], 'value':item['location'].lower()})
-                value.store()
-
-            bucket = client.bucket('data')
-            if bucket.search_enabled() is False:
-                bucket.enable_search()
-
-            value = bucket.new(item['id'], data={'id': item['id'], 'value':item['data'].lower()})
-            value.store()
+                    value = bucket.new(word, data=data)
+                    value.store()

@@ -4,8 +4,8 @@
     <h3>Jobs</h3>
     {% for job in jobs %}
         <div class="row">
-            <div class="half"><h4><a href="/jobs/{{job}}">{{job}}</a></h4></div>
-            <div class="half"><h4><a href="/edit/{{job}}">Edit</a></h4></div>
+            <div class="half"><h4><a href="/jobs/{{job.slug}}">{{job.name}}</a></h4></div>
+            <div class="half"><h4><a href="/edit/{{job.slug}}">Edit</a></h4></div>
         </div>
     {% endfor %}
 {% endblock %}

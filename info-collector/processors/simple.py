@@ -1,7 +1,11 @@
 from abstractprocessor import AbsProcessor
 import riak
 import psycopg2
+import psycopg2.extensions
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 from config import *
+from information import Information
 
 class SimpleProcessor(AbsProcessor):
     def __init__(self):
@@ -14,56 +18,83 @@ class SimpleProcessor(AbsProcessor):
             return None
 
         ids = set()
-        if job['lat'] and job['lon']:
-            coordinates = [job['lat'], job['lon']]
+        if job.lat and job.lon:
+            coordinates = [job.lat, job.lon]
         else:
             coordinates = None
 
-        distance = job['distance'] * 1609.34 #convert to meters
-        time = job['time']
+        distance = job.distance * 1609.34 #convert to meters
+        time = job.time
 
-        for source in job['sources']:
-            search_query = client.search('source', source)
+        if job.tags:
+            for tag in job.tags:
 
-            for result in search_query.run():
-                item = result.get()
-                item_data = item.get_data()
-                ids.add(item_data['id'])
+                search_query = client.search('words', '%s*' % tag)
 
+                for result in search_query.run():
+                    item = result.get()
+                    item_data = item.get_data()
+                    ids.add(item_data['id'])
 
-        for location in job['location']:
-            search_query = client.search('location', location)
-
-            for result in search_query.run():
-                item = result.get()
-                item_data = item.get_data()
-                ids.add(item_data['id'])
-
-
-        for tag in job['tags']:
-            search_query = client.search('creator', '%s*' % tag)
-
-            for result in search_query.run():
-                item = result.get()
-                item_data = item.get_data()
-                ids.add(item_data['id'])
-
-            search_query = client.search('data', '%s*' % tag)
-
-            for result in search_query.run():
-                item = result.get()
-                item_data = item.get_data()
-                ids.add(item_data['id'])
-
+        new_ids = []
+        for id in ids:
+            new_ids.append("'%s'" % id)
 
         return {
-            'ids': ",".join(ids),
+            'ids': ",".join(new_ids),
             'time': time,
-            'coordinates': " ".join(coordinates),
+            'coordinates': " ".join(coordinates) if coordinates else None,
             'distance': distance
         }
 
-    def get_data(self, parameters):
+    def get_data(self, parameters, page_size, page):
+        conn = psycopg2.connect(POSTGRES_DB_STRING)
+        cur = conn.cursor()
+        data = []
+        limit = str(page_size)
+        offset = str((page-1) * page_size)
+
+        if parameters['coordinates']:
+            cur.execute("""
+            select source,source_id,creator,time,location,lat,lon,data
+            from information
+            where source_id in (%(ids)s) and time >= %(time)s and
+            (ST_DWithin(geom, 'POINT(%(coordinates)s)', %(distance)s) or lat = 0.0 and lon = 0.0)
+            order by time desc
+            limit """ + limit + """ offset """ + offset + """; """ % parameters )
+            results = cur.fetchall()
+        else:
+            cur.execute("""
+            select source,source_id,creator,time,location,lat,lon,data
+            from information
+            where source_id in (%(ids)s) and time >= %(time)s
+            order by time desc
+            limit """ + limit + """ offset """ + offset + """; """ % parameters )
+            results = cur.fetchall()
+
+
+        for result in results:
+            data.append(
+                Information(
+                    result[0],
+                    result[1],
+                    result[2],
+                    result[3],
+                    result[7],
+                    result[4],
+                    result[5],
+                    result[6]
+                )
+            )
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return data
+
+
+    def get_data_since(self, parameters, since):
         conn = psycopg2.connect(POSTGRES_DB_STRING)
         cur = conn.cursor()
         data = []
@@ -72,31 +103,31 @@ class SimpleProcessor(AbsProcessor):
             cur.execute("""
             select source,source_id,creator,time,location,lat,lon,data
             from information
-            where source_id in (%(ids)s) and time >= $(time)s and
-            (ST_DWithin(geom, 'POINT(%(coordinates)s)', %(distance)s) or lat = 0.0 and lon = 0.0);
-            """ % parameters )
+            where source_id in (%(ids)s) and time >= """ + since + """ and
+            (ST_DWithin(geom, 'POINT(%(coordinates)s)', %(distance)s) or lat = 0.0 and lon = 0.0)
+            order by time desc""" % parameters )
             results = cur.fetchall()
         else:
             cur.execute("""
             select source,source_id,creator,time,location,lat,lon,data
             from information
-            where source_id in (%(ids)s) and time >= $(time)s
-            """ % parameters)
+            where source_id in (%(ids)s) and time >= """ + since + """ and
+            order by time desc""" % parameters )
             results = cur.fetchall()
 
 
         for result in results:
             data.append(
-                {
-                    'source': result[0],
-                    'source_id': result[1],
-                    'creator': result[2],
-                    'time': result[3],
-                    'location': result[4],
-                    'lat': result[5],
-                    'lon': result[6],
-                    'data': result[7]
-                }
+                Information(
+                    result[0],
+                    result[1],
+                    result[2],
+                    result[3],
+                    result[7],
+                    result[4],
+                    result[5],
+                    result[6]
+                )
             )
 
         conn.commit()

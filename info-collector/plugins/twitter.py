@@ -1,27 +1,21 @@
 #!/usr/bin/env python
 
-# This is an example plugin that can be used as a
-# skeleton for new plugins.
-# The documentation string in the plugin class will be used to
-# print the help of the plugin.
-
 from abstractplugin import AbsPlugin
 import requests
 import time
 
 
 class TwitterPlugin(AbsPlugin):
-    """ An example plugin that prints dummy messages """
     def __init__(self):
         pass
 
-    # Public methods will be considered plugin commands.
-    # The name of the command will be the method name.
-    # The documentation string in command methods will be used to
-    # print the help of the command.
-    # The arguments are the options given to the command itself
-    def get_data(self):
-        twit = requests.get('http://search.twitter.com/search.json?q=%40twitterapi')
+    def get_data(self,job):
+        url = u'http://search.twitter.com/search.json?q='
+        url = url + ' OR '.join(job.tags.split(' '))
+        url = url + "&count=100"
+        if job.lat > 0 and job.lon > 0:
+            url = url + '&geocode=' + job.lat + ',' + job.lon + ',' + str(job.distance) + 'mi'
+        twit = requests.get(url)
         data = []
         for tweet in twit.json()['results']:
             date =  time.strptime(tweet['created_at'], '%a, %d %b %Y %H:%M:%S +0000')
@@ -30,7 +24,7 @@ class TwitterPlugin(AbsPlugin):
                 'id': str(tweet['id']),
                 'creator': tweet['from_user'],
                 'time': int(time.strftime('%s',date)),
-                'location': tweet['location'] if 'location' in tweet else '',
+                'location': tweet['location'] if 'location' in tweet else u'',
                 'lat': tweet['geo']['coordinates'][0] if tweet['geo'] and 'coordinates' in tweet['geo'] else 0.0,
                 'lon': tweet['geo']['coordinates'][1] if tweet['geo'] and 'coordinates' in tweet['geo'] else 0.0,
                 'data': tweet['text']
