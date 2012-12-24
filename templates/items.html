@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}{{job_name}}{% endblock %}
+{% block body %}
+     <ul>
+        {% for item in data %}
+            <li>
+                    <h6>{{item.data}}</h6>
+                    <em>Source: {{item.source}}</em>
+                    <em>by {{item.creator}}</em>
+                    <em>at {{item.time}}</em>
+                    <em > {{item.coordinate_string}}</em>
+                    <div class="margin-bottom-10"></div>
+                    <hr/>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

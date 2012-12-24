@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% block title %}Job Editor{% endblock %}
+{% block body %}
+<form method="POST" class="forms">
+        <ul>
+        {% if not job %}
+            <li>
+                <label class="bold">Name</label>
+                <input id="name" name="name" type="text" maxlength="250" class="width-100"/>
+            </li>
+            <li>
+                <label class="bold">Since</label>
+                <input id="time" name="time" type="text" maxlength="250" class="width-100"/>
+                <span class="help-inline margin-bottom-ten">ex. 21/12/2012 16:30</span>
+            </li>
+            <li>
+                <ul class="multicolumn">
+                    <li class="width-33">
+                        <label class="bold">Latitude</label>
+                        <input id="lat" name="lat" type="text" maxlength="250" class="width-100"/>
+                    </li>
+                    <li class="width-33">
+                        <label class="bold">Longitude</label>
+                        <input id="lon" name="lon" type="text" maxlength="250" class="width-100"/>
+                    </li>
+                    <li class="width-33">
+                        <label class="bold">Distance in miles</label>
+                        <input id="distance" name="distance" type="text" maxlength="250" class="width-100"/>
+                    </li>
+
+                </ul>
+            </li>
+            <li>
+                <label class="bold">Tags</label>
+                <input id="tags" name="tags" type="text" maxlength="250" class="width-100"/>
+                <span class="help-inline margin-bottom-ten">Separate tags by spaces</span>
+            </li>
+
+        {% else %}
+            <li>
+                <label class="bold">Name</label>
+                <input id="name" name="name" type="text" maxlength="250" value="{{job.name}}" class="width-100"/>
+            </li>
+            <li>
+                <label class="bold">Since</label>
+                <input id="time" name="time" type="text" maxlength="250" value="{{job.time}}" class="width-100"/>
+                <span class="help-inline margin-bottom-ten">ex. 21/12/2012 16:30</span>
+            </li>
+            <li>
+                <ul class="multicolumn">
+                    <li class="width-33">
+                        <label class="bold">Latitude</label>
+                        <input id="lat" name="lat" type="text" maxlength="250" value="{{job.lat}}" class="width-100"/>
+                    </li>
+                    <li class="width-33">
+                        <label class="bold">Longitude</label>
+                        <input id="lon" name="lon" type="text" maxlength="250" value="{{job.lon}}" class="width-100"/>
+                    </li>
+                    <li class="width-33">
+                        <label class="bold">Distance in miles</label>
+                        <input id="distance" name="distance" type="text" maxlength="250" value="{{job.distance}}" class="width-100"/>
+                    </li>
+
+                </ul>
+            </li>
+            <li>
+                <label class="bold">Tags</label>
+                <input id="tags" name="tags" type="text" maxlength="250" value="{{job.tags}}" class="width-100"/>
+                <span class="help-inline margin-bottom-ten">Separate tags by spaces</span>
+            </li>
+        {% endif %}
+        <li>
+            <input type="submit" value="Save" class="btn"/>
+        </li>
+        </ul>
+    </form>
+    {% endblock %}
