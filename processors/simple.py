@@ -52,13 +52,6 @@ class SimpleProcessor(AbsProcessor):
             parameters['limit'] = str(page_size)
             parameters['offset'] = str((page-1) * page_size)
 
-            print """
-            select source,source_id,creator,time,location,lat,lon,data
-            from information
-            where source_id in (%(ids)s) and time >= %(time)s and
-            (ST_DWithin(geom, ST_GeomFromText('POINT(%(coordinates)s)',4326), %(distance)s) or lat = 0.0 and lon = 0.0)
-            order by time desc limit %(limit)s offset %(offset)s;""" % parameters
-
 
             cur.execute("""
             select source,source_id,creator,time,location,lat,lon,data
@@ -94,22 +87,15 @@ class SimpleProcessor(AbsProcessor):
         conn = psycopg2.connect(POSTGRES_DB_STRING)
         cur = conn.cursor()
         data = []
+        parameters['since'] = since
 
-        if parameters['coordinates']:
-            cur.execute("""
-            select source,source_id,creator,time,location,lat,lon,data
-            from information
-            where source_id in (%(ids)s) and time >= """ + since + """ and
-            (ST_DWithin(geom, ST_GeomFromText('POINT(%(coordinates)s)',4326), %(distance)s) or lat = 0.0 and lon = 0.0)
-            order by time desc""" % parameters )
-            results = cur.fetchall()
-        else:
-            cur.execute("""
-            select source,source_id,creator,time,location,lat,lon,data
-            from information
-            where source_id in (%(ids)s) and time >= """ + since + """ and
-            order by time desc""" % parameters )
-            results = cur.fetchall()
+        cur.execute("""
+        select source,source_id,creator,time,location,lat,lon,data
+        from information
+        where source_id in (%(ids)s) and time >= %(since)s and
+        (ST_DWithin(geom, ST_GeomFromText('POINT(%(coordinates)s)',4326), %(distance)s) or lat = 0.0 and lon = 0.0)
+        order by time desc""" % parameters )
+        results = cur.fetchall()
 
 
         for result in results:
