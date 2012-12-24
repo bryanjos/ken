@@ -5,18 +5,17 @@ import datetime
 import riak
 import psycopg2
 from config import *
-from jobops import *
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 import traceback
+from multiprocessing import Process
 
 class AbsPlugin:
 
-    def execute(self, task_queue, name):
+    def execute(self, task_queue, name, jobs):
         try:
-            jobs = get_jobs()
             for job in jobs:
-                self.insert_data(self.get_data(job))
+                self.insert_and_tokenize(self.get_data(job))
         except:
             print '>>> traceback <<<'
             traceback.print_exc()
@@ -38,24 +37,20 @@ class AbsPlugin:
     def get_data(self, job):
         raise NotImplementedError()
 
-    def insert_data(self,data):
+    def insert_and_tokenize(self, data):
+        #insert = Process(target=self._insert_data, args=(data,1))
+        #tokenize = Process(target=self._tokenize, args=(data,1))
 
-        conn = psycopg2.connect(POSTGRES_DB_STRING)
-        cur = conn.cursor()
+        #insert.start()
+        #tokenize.start()
 
-        for item in data:
-
-            cur.execute("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
-            values( %(source)s, %(id)s, %(creator)s, %(time)s, %(location)s, %(lat)s, %(lon)s, %(data)s, ST_GeomFromText(%(geom)s,4326))
-            """, item.to_json())
-
-        conn.commit()
-        cur.close()
-        conn.close()
+        #insert.join()
+        #tokenize.join()
+        self._insert_data(data,1)
+        self._tokenize(data,1)
 
 
-
-
+    def _tokenize(self, data, num):
         client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
         bucket = client.bucket('words')
         if bucket.search_enabled() is False:
@@ -81,3 +76,22 @@ class AbsPlugin:
                             print '>>> traceback <<<'
                             traceback.print_exc()
                             print '>>> end of traceback <<<'
+
+    def _insert_data(self, data, num):
+
+        conn = psycopg2.connect(POSTGRES_DB_STRING)
+        cur = conn.cursor()
+
+        for item in data:
+
+            cur.execute("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
+            values( %(source)s, %(id)s, %(creator)s, %(time)s, %(location)s, %(lat)s, %(lon)s, %(data)s, ST_GeomFromText(%(geom)s,4326))
+            """, item.to_json())
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
+
+

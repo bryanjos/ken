@@ -43,11 +43,13 @@ class PluginManager:
             print name
 
     def do(self):
+        from jobops import get_jobs
+        jobs = get_jobs()
         while self.__taskQueue.empty() is False:
             name = self.__taskQueue.get()
             print 'Starting polling for %s' % name
             plugin = self.load_plugin(name)
-            Process(target=plugin.execute, args=(self.__taskQueue, name)).start()
+            Process(target=plugin.execute, args=(self.__taskQueue, name, jobs)).start()
 
 
 def list_plugins():
