@@ -23,3 +23,7 @@ The Collector periodically goes out to the sources defined in the plugins folder
 Sources are defined in the plugins folder. Plugins must implement the AbsPlugin class's get_data function.
 
 The Server is where jobs are defined and data is viewed by users.
+
+To run:
+	* python cli.py
+	* python server.py
