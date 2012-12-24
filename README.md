@@ -5,17 +5,17 @@ Collects information from various sources based on defined criteria and aggregat
 
 Requirements:
 
-	* Riak
-	* Postgres
-	* NLTK
-	* riak python client
-	* psycopg2
-	* requests
-	* flask
-	* gevent
-	* gevent-websocket
+	riak
+	postgres
+	nltk
+	riak python client
+	psycopg2
+	requests
+	flask
+	gevent
+	gevent-websocket
 
-Contains 2 Parts. The Collector and the server
+Contains 2 Parts. The Collector and the Server
 
 
 The Collector periodically goes out to the sources defined in the plugins folder (more on this later), gets data defined by the jobs in the system, puts the data in the database and indexes key words from the data.
@@ -26,5 +26,5 @@ The Server is where jobs are defined and data is viewed by users.
 
 To run:
 
-	* python collector.py
-	* python server.py
+	python collector.py
+	python server.py
