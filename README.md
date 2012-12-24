@@ -8,7 +8,7 @@ Requirements:
 	* Riak
 	* Postgres
 	* NLTK
-	* Riak-Python-Client
+	* riak python client
 	* psycopg2
 	* requests
 	* flask
@@ -26,5 +26,5 @@ The Server is where jobs are defined and data is viewed by users.
 
 To run:
 
-	* python cli.py
+	* python collector.py
 	* python server.py

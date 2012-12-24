@@ -4,7 +4,7 @@ from pluginmanager import PluginManager
 import sys
 
 
-class CLI:
+class Collector:
     """ Main command line interface """
     def __init__(self):
         """ Initialize the plugin manager """
@@ -22,6 +22,6 @@ class CLI:
 
 
 if __name__ == "__main__":
-    cli = CLI()
-    ret = cli.parse_input()
+    collector = Collector()
+    ret = collector.parse_input()
     exit(ret) if ret else exit()
