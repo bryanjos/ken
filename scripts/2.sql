@@ -23,3 +23,5 @@ Create Trigger ignore_info_dups
     Before Insert On information
     For Each Row
     Execute Procedure ignore_info_dups();
+
+Insert into schema_version(version) values (2);

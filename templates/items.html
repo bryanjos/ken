@@ -16,6 +16,7 @@
     </ul>
 {% endblock %}
 {% block js %}
+    <script src="{{config.STATIC_URL}}js/EventSource.js"></script>
     <script>
     var source = new EventSource('/stream/{{job_slug}}');
     source.onmessage = function (event) {

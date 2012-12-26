@@ -12,6 +12,7 @@ import traceback
 from jobops import process_job_since
 import time
 from processors import simple
+
 class AbsPlugin:
 
     def __call__(self, name, jobs):
