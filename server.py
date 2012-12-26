@@ -1,13 +1,11 @@
-from flask import Flask, jsonify, request,render_template, abort, url_for, redirect, json
-from geventwebsocket.handler import WebSocketHandler
-from gevent.pywsgi import WSGIServer
+from flask import Flask, jsonify, request,render_template, abort, url_for, redirect, json, Response
 import datetime
-import time
 import jobops
 from processors import simple
 from pluginmanager import list_plugins
 from config import *
 from serverops import *
+import redis
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -20,6 +18,10 @@ def request_wants_json():
            request.accept_mimetypes[best] >\
            request.accept_mimetypes['text/html']
 
+
+@app.route("/about")
+def about():
+    return render_template('about.html', version=VERSION, plugins=', '.join(list_plugins()))
 
 @app.route("/")
 def index():
@@ -114,41 +116,22 @@ def job(job_slug, page=1):
             return render_template('items.html', data=data, job_name=job.name, job_slug=job.slug)
 
 
-@app.route('/socket/<job_slug>')
-def api(job_slug):
-    if request.environ.get('wsgi.websocket'):
-        ws = request.environ['wsgi.websocket']
-        while True:
-            message = ws.receive()
-            job =  jobops.get_job(job_slug)
-            if message['page']:
-                data = jobops.process_job(simple.SimpleProcessor(), job, 30, message['page'])
-            else:
-                data = jobops.process_job(simple.SimpleProcessor(), job, 30, 1)
-
-            ws.send(data)
-    return
-
-@app.route('/socket/<job_slug>/update')
-def api(job_slug):
-    if request.environ.get('wsgi.websocket'):
-        ws = request.environ['wsgi.websocket']
-        while True:
-
-            message = ws.receive()
-            job =  jobops.get_job(job_slug)
-
-            if message and message['time']:
-                data = jobops.process_job_since(simple.SimpleProcessor(), job, message['time'])
-            else:
-                data = jobops.process_job_since(simple.SimpleProcessor(), job, int(time.time() - POLLING_INTERVAL))
-
-            ws.send(data)
+def event_stream(job_slug):
+    red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+    pubsub = red.pubsub()
+    pubsub.subscribe(job_slug)
+    for message in pubsub.listen():
+        print message
+        yield 'data: %s\n\n' % message['data']
 
 
-    return
+
+
+
+@app.route('/stream/<job_slug>')
+def stream(job_slug):
+    return Response(event_stream(job_slug), mimetype="text/event-stream")
 
 
 if __name__ == "__main__":
-    http_server = WSGIServer(('',SERVER_PORT), app, handler_class=WebSocketHandler)
-    http_server.serve_forever()
+    app.run(port=SERVER_PORT, threaded=True)

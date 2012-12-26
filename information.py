@@ -19,8 +19,8 @@ class Information:
             'time':self.time,
             'data':self.data,
             'location':self.location,
-            'lat': self.lat,
-            'lon': self.lon,
+            'lat': float(self.lat),
+            'lon': float(self.lon),
             'geom': self.geom
         }
 

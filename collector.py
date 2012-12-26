@@ -23,5 +23,4 @@ class Collector:
 
 if __name__ == "__main__":
     collector = Collector()
-    ret = collector.parse_input()
-    exit(ret) if ret else exit()
+    collector.parse_input()

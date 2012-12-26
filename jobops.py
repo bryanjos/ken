@@ -95,7 +95,7 @@ def process_job_since(processor, job, since):
     results = processor.get_keys(job)
 
     if results:
-        return processor.get_data(results, since)
+        return processor.get_data_since(results, since)
 
     return None
 

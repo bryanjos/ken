@@ -4,11 +4,14 @@ import sys
 import datetime
 import riak
 import psycopg2
+import redis
 from config import *
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 import traceback
-from multiprocessing import Process
+from jobops import process_job_since
+import time
+from processors import simple
 
 class AbsPlugin:
 
@@ -16,6 +19,7 @@ class AbsPlugin:
         try:
             for job in jobs:
                 self.insert_and_tokenize(self.get_data(job))
+                self._reduce(job)
         except:
             print '>>> traceback <<<'
             traceback.print_exc()
@@ -38,19 +42,27 @@ class AbsPlugin:
         raise NotImplementedError()
 
     def insert_and_tokenize(self, data):
-        #insert = Process(target=self._insert_data, args=(data,1))
-        #tokenize = Process(target=self._tokenize, args=(data,1))
-
-        #insert.start()
-        #tokenize.start()
-
-        #insert.join()
-        #tokenize.join()
-        self._insert_data(data,1)
-        self._tokenize(data,1)
+        self._insert(data)
+        self._tokenize(data)
 
 
-    def _tokenize(self, data, num):
+    def _insert(self, data):
+
+        conn = psycopg2.connect(POSTGRES_DB_STRING)
+        cur = conn.cursor()
+
+        for item in data:
+
+            cur.execute("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
+            values( %(source)s, %(id)s, %(creator)s, %(time)s, %(location)s, %(lat)s, %(lon)s, %(data)s, ST_GeomFromText(%(geom)s,4326))
+            """, item.to_json())
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+
+    def _tokenize(self, data):
         client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
         bucket = client.bucket('words')
         if bucket.search_enabled() is False:
@@ -77,20 +89,40 @@ class AbsPlugin:
                             traceback.print_exc()
                             print '>>> end of traceback <<<'
 
-    def _insert_data(self, data, num):
 
-        conn = psycopg2.connect(POSTGRES_DB_STRING)
-        cur = conn.cursor()
+    def _reduce(self, job):
+        client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
+        bucket = client.bucket('job_data')
+        if bucket.search_enabled() is False:
+            bucket.enable_search()
 
-        for item in data:
+        job_data = bucket.get(job.slug).get_data()
+        if job_data is None:
+            info_json = []
+            since = job.time
+        else:
+            info_json = job_data['information']
+            since = job_data['since']
 
-            cur.execute("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
-            values( %(source)s, %(id)s, %(creator)s, %(time)s, %(location)s, %(lat)s, %(lon)s, %(data)s, ST_GeomFromText(%(geom)s,4326))
-            """, item.to_json())
+        info = process_job_since(simple.SimpleProcessor(), job, since)
 
-        conn.commit()
-        cur.close()
-        conn.close()
+        new_info = []
+        for i in reversed(info):
+            i_json = i.to_json()
+            new_info.append(i_json)
+
+        info_json.extend(new_info)
+
+        red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+        red.publish(job.slug, new_info)
+
+        job_data = {'since': int(time.time()), 'information': info_json}
+
+        value = bucket.new(job.slug, data=job_data)
+        value.store()
+
+
+
 
 
 
