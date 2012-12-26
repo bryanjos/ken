@@ -12,13 +12,18 @@ import traceback
 from jobops import process_job_since
 import time
 from processors import simple
-
 class AbsPlugin:
 
-    def execute(self, task_queue, name, jobs):
+    def __call__(self, name, jobs):
+        print 'execute: %s' % name
+        return self.execute(name, jobs)
+
+    def execute(self, name, jobs):
         try:
             for job in jobs:
-                self.insert_and_tokenize(self.get_data(job))
+                data = self.get_data(job)
+                self._insert(data)
+                self._tokenize(data)
                 self._reduce(job)
         except:
             print '>>> traceback <<<'
@@ -31,35 +36,40 @@ class AbsPlugin:
                 bucket.enable_search()
 
                 now = datetime.datetime.now()
-                value = bucket.new(str(now), data={'time': str(now), 'value':sys.exc_info()[0]})
+                value = bucket.new(str(now), data={'time': str(now), 'error':sys.exc_info()[0], 'stacktrace': traceback.print_exc()})
                 value.store()
-
-        task_queue.put(name)
+        print 'end execute: %s' % name
+        return name
 
 
 
     def get_data(self, job):
         raise NotImplementedError()
 
-    def insert_and_tokenize(self, data):
-        self._insert(data)
-        self._tokenize(data)
-
 
     def _insert(self, data):
+        conn = None
+        cur = None
+        try:
+            conn = psycopg2.connect(POSTGRES_DB_STRING)
+            cur = conn.cursor()
 
-        conn = psycopg2.connect(POSTGRES_DB_STRING)
-        cur = conn.cursor()
+            for item in data:
 
-        for item in data:
+                cur.execute("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
+                values( %(source)s, %(id)s, %(creator)s, %(time)s, %(location)s, %(lat)s, %(lon)s, %(data)s, ST_GeomFromText(%(geom)s,4326))
+                """, item.to_json())
 
-            cur.execute("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
-            values( %(source)s, %(id)s, %(creator)s, %(time)s, %(location)s, %(lat)s, %(lon)s, %(data)s, ST_GeomFromText(%(geom)s,4326))
-            """, item.to_json())
-
-        conn.commit()
-        cur.close()
-        conn.close()
+            conn.commit()
+        except:
+            print '>>> traceback <<<'
+            traceback.print_exc()
+            print '>>> end of traceback <<<'
+        finally:
+            if cur:
+                cur.close()
+            if conn:
+                conn.close()
 
 
     def _tokenize(self, data):
@@ -69,7 +79,6 @@ class AbsPlugin:
             bucket.enable_search()
 
         for item in data:
-
             for sentence in sent_tokenize(item.data):
                 for word in word_tokenize(sentence):
                     if word not in stopwords.words('english') and word not in STOP_WORDS:
@@ -93,6 +102,7 @@ class AbsPlugin:
     def _reduce(self, job):
         client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
         bucket = client.bucket('job_data')
+
         if bucket.search_enabled() is False:
             bucket.enable_search()
 

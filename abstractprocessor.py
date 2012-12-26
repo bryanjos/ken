@@ -3,10 +3,10 @@
 class AbsProcessor:
 
     def get_keys(self, job):
-        pass
+        raise NotImplementedError()
 
     def get_data_paged(self, parameters, page_size, page):
-        pass
+        raise NotImplementedError()
 
     def get_data_since(self, parameters, since_unix_time):
-        pass
+        raise NotImplementedError()

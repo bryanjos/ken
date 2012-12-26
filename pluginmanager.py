@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from plugins import __all__
-from multiprocessing import Process, Queue
+import multiprocessing as mp
 import time
 from config import POLLING_INTERVAL
 
@@ -11,7 +11,7 @@ class PluginManager:
     def __init__(self):
         """ Initialize the plugin list """
         self.__plugins = {}
-        self.__taskQueue = Queue(maxsize=len(list_plugins()))
+        self.__taskQueue = mp.Queue(maxsize=len(list_plugins()))
 
         for name in sorted(__all__):
             self.__taskQueue.put(name)
@@ -42,14 +42,21 @@ class PluginManager:
         for name in list_plugins():
             print name
 
+    def do_callback(self, name):
+        print 'Done %s, putting it back in the queue' % name
+        self.__taskQueue.put(name)
+
     def do(self):
         from jobops import get_jobs
         jobs = get_jobs()
+        pool = mp.Pool()
         while self.__taskQueue.empty() is False:
             name = self.__taskQueue.get()
-            print 'Starting polling for %s' % name
             plugin = self.load_plugin(name)
-            Process(target=plugin.execute, args=(self.__taskQueue, name, jobs)).start()
+            print 'Starting polling for %s' % name
+            pool.apply_async(plugin, args = (name, jobs), callback=self.do_callback)
+
+
 
 
 def list_plugins():
