@@ -51,7 +51,7 @@ class SimpleProcessor(AbsProcessor):
             parameters['limit'] = str(page_size)
             parameters['offset'] = str((page-1) * page_size)
 
-            connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+            connection = Connection(MONGODB_HOST, MONGODB_PORT)
             db = connection['ken']
             collection = db['information']
 
@@ -87,7 +87,7 @@ class SimpleProcessor(AbsProcessor):
 
     def get_data_since(self, parameters, since):
 
-        connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        connection = Connection(MONGODB_HOST, MONGODB_PORT)
         db = connection['ken']
         collection = db['information']
 

@@ -24,7 +24,7 @@ class Collector:
 
 
 if __name__ == "__main__":
-    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
 
     collection = db['job_data']

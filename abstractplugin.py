@@ -23,7 +23,7 @@ class AbsPlugin:
     def execute(self, name, jobs):
         try:
             for job in jobs:
-                connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+                connection = Connection(MONGODB_HOST, MONGODB_PORT)
                 db = connection['ken']
                 collection = db['job_data']
 
@@ -48,7 +48,7 @@ class AbsPlugin:
             print '>>> traceback <<<'
             traceback.print_exc()
             print '>>> end of traceback <<<'
-            connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+            connection = Connection(MONGODB_HOST, MONGODB_PORT)
             db = connection['ken']
             collection = db['errors']
 
@@ -66,7 +66,7 @@ class AbsPlugin:
 
     def _insert(self, data):
         try:
-            connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+            connection = Connection(MONGODB_HOST, MONGODB_PORT)
             db = connection['ken']
             collection = db['information']
 
@@ -107,7 +107,7 @@ class AbsPlugin:
 
 
     def _reduce(self, job):
-        connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        connection = Connection(MONGODB_HOST, MONGODB_PORT)
         db = connection['ken']
         collection = db['job_data']
 

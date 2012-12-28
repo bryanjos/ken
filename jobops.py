@@ -29,7 +29,7 @@ def validate_job(job_json):
     return None
 
 def get_job(job_slug):
-    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
     collection = db['jobs']
 
@@ -41,7 +41,7 @@ def get_job(job_slug):
     return Job(job['name'], job['slug'], job['time'], job['tags'], job['lat'], job['lon'], job['distance'])
 
 def save_job(job):
-    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
     collection = db['jobs']
 
@@ -56,20 +56,20 @@ def save_job(job):
         collection.update(job)
 
 def get_job_keys():
-    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
     collection = db['jobs']
     return collection.find({}, {"_id": 0, "slug":1})
 
 def get_job_keys_and_names():
-    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
     collection = db['jobs']
     return collection.find({}, {"_id": 0, "slug":1, "name":1})
 
 
 def get_jobs():
-    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
     collection = db['jobs']
     data = collection.find({})
