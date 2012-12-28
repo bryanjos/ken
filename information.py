@@ -8,7 +8,6 @@ class Information:
         self.location = location
         self.lat = lat
         self.lon = lon
-        self.geom = 'POINT(%s %s)' % (lat,lon)
         self.coordinate_string = '' if lat is 0.0 and lon is 0.0 else '%s %s' % (lat, lon)
 
     def to_json(self):
@@ -21,6 +20,6 @@ class Information:
             'location':self.location,
             'lat': float(self.lat),
             'lon': float(self.lon),
-            'geom': self.geom
+            'coordinates': { 'x':float(self.lon), 'y': float(self.lat)}
         }
 

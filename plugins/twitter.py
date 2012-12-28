@@ -3,16 +3,18 @@
 from abstractplugin import AbsPlugin
 import requests
 import time
+import datetime
 from information import Information
 
 class TwitterPlugin(AbsPlugin):
     def __init__(self):
         pass
 
-    def get_data(self,job):
+    def get_data(self,job, since):
         url = u'http://search.twitter.com/search.json?q='
         url = url + ' OR '.join(job.tags)
-        url = url + '&count=100&lang=en'
+        url = url + ' since:' + datetime.datetime.fromtimestamp(since).strftime("%Y-%m-%d%")
+        url = url + '&count=100&lang=en&result_type=recent'
         if job.lat > 0 and job.lon > 0:
             url = url + '&geocode=' + job.lat + ',' + job.lon + ',' + str(job.distance) + 'mi'
         twit = requests.get(url)

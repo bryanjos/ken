@@ -1,5 +1,5 @@
-import riak
-from config import RIAK_HOST, RIAK_PORT, DATE_FORMAT
+from pymongo import *
+from config import *
 import time
 from job import Job
 
@@ -29,54 +29,53 @@ def validate_job(job_json):
     return None
 
 def get_job(job_slug):
-    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
-    bucket = client.bucket('jobs')
-    job = bucket.get(job_slug).get_data()
+    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    db = connection['ken']
+    collection = db['jobs']
+
+    job = collection.find_one({"slug": job_slug})
+
     if job is None:
         return None
 
     return Job(job['name'], job['slug'], job['time'], job['tags'], job['lat'], job['lon'], job['distance'])
 
 def save_job(job):
+    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    db = connection['ken']
+    collection = db['jobs']
+
     dt = time.strptime(job['time'], DATE_FORMAT)
     job['time'] = int(time.strftime('%s',dt))
 
-    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
-    bucket = client.bucket('jobs')
-
-    value = bucket.new(job['slug'], data=job)
-    value.store()
+    if len(collection.find({"slug": job.slug}).limit(1)) is 0:
+        collection.insert(job)
+    else:
+        jobFromDB = collection.find({"slug": job.slug}).limit(1)
+        job['_id'] = jobFromDB['_id']
+        collection.update(job)
 
 def get_job_keys():
-    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
-    bucket = client.bucket('jobs')
-    return bucket.get_keys()
+    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    db = connection['ken']
+    collection = db['jobs']
+    return collection.find({}, {"_id": 0, "slug":1})
 
 def get_job_keys_and_names():
-    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
-    bucket = client.bucket('jobs')
-    keys = bucket.get_keys()
-    keys_and_names = []
-
-    for key in keys:
-        job = bucket.get(key).get_data()
-        keys_and_names.append({
-            'slug': job['slug'],
-            'name': job['name']
-        })
-
-
-    return keys_and_names
+    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    db = connection['ken']
+    collection = db['jobs']
+    return collection.find({}, {"_id": 0, "slug":1, "name":1})
 
 
 def get_jobs():
-    client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
-    bucket = client.bucket('jobs')
-    keys = bucket.get_keys()
+    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    db = connection['ken']
+    collection = db['jobs']
+    data = collection.find({})
     jobs = []
 
-    for key in keys:
-        job = bucket.get(key).get_data()
+    for job in data:
         jobs.append(Job(job['name'], job['slug'], job['time'], job['tags'], job['lat'], job['lon'], job['distance']))
 
 

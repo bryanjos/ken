@@ -118,10 +118,9 @@ def job(job_slug, page=1):
 
 def event_stream(job_slug):
     red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-    pubsub = red.pubsub()
-    pubsub.subscribe(job_slug)
-    for message in pubsub.listen():
-        print message
+    pub_sub = red.pubsub()
+    pub_sub.subscribe(job_slug)
+    for message in pub_sub.listen():
         yield 'data: %s\n\n' % message['data']
 
 

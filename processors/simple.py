@@ -1,6 +1,6 @@
 from abstractprocessor import AbsProcessor
 import riak
-import psycopg2
+from pymongo import *
 from config import *
 from information import Information
 
@@ -16,11 +16,11 @@ class SimpleProcessor(AbsProcessor):
 
         ids = set()
         if job.lat and job.lon:
-            coordinates = [str(job.lat), str(job.lon)]
+            coordinates = [job.lat, job.lon]
         else:
             coordinates = None
 
-        distance = job.distance * 1609.34 #convert to meters
+        distance = job.distance
         time = job.time
 
         if job.tags:
@@ -38,82 +38,86 @@ class SimpleProcessor(AbsProcessor):
             new_ids.append("'%s'" % id)
 
         return {
-            'ids': ",".join(new_ids),
+            'ids': ids,
             'time': time,
-            'coordinates': " ".join(coordinates) if coordinates else None,
+            'coordinates': coordinates if coordinates else None,
             'distance': distance
         }
 
     def get_data(self, parameters, page_size, page):
         data = []
         if len(parameters['ids'].strip()) > 0:
-            conn = psycopg2.connect(POSTGRES_DB_STRING)
-            cur = conn.cursor()
+
             parameters['limit'] = str(page_size)
             parameters['offset'] = str((page-1) * page_size)
 
+            connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+            db = connection['ken']
+            collection = db['information']
 
-            cur.execute("""
-            select source,source_id,creator,time,location,lat,lon,data
-            from information
-            where source_id in (%(ids)s) and time >= %(time)s and
-            (ST_DWithin(geom, ST_GeomFromText('POINT(%(coordinates)s)',4326), %(distance)s) or lat = 0.0 and lon = 0.0)
-            order by time desc limit %(limit)s offset %(offset)s;""" % parameters )
-            results = cur.fetchall()
+            results = collection.find(
+                {
+                    "time": {"$gt": parameters['time']},
+                    "source_id": {"$in": parameters['ids']},
+                    "$or":[
+                        {"coordinates": { "$centerSphere": [ parameters['coordinates'] , parameters['distance'] / 3963.192 ] }},
+                        {"lat": 0.0, "lon": 0.0 }
+                    ]
+
+                }
+            ).skip(parameters['offset']).limit(parameters['limit']).sort("time", DESCENDING)
 
 
-            for result in results:
+            for info in results:
                 data.append(
                     Information(
-                        result[0],
-                        result[1],
-                        result[2],
-                        result[3],
-                        result[7],
-                        result[4],
-                        result[5],
-                        result[6]
+                        info['source'],
+                        info['id'],
+                        info['creator'],
+                        info['time'],
+                        info['data'],
+                        info['location'],
+                        info['lat'],
+                        info['lon']
                     )
                 )
-
-            conn.commit()
-            cur.close()
-            conn.close()
 
         return data
 
 
     def get_data_since(self, parameters, since):
-        conn = psycopg2.connect(POSTGRES_DB_STRING)
-        cur = conn.cursor()
+
+        connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        db = connection['ken']
+        collection = db['information']
+
+        results = collection.find(
+            {
+                "time": {"$gt": since},
+                "source_id": {"$in": parameters['ids']},
+                "$or":[
+                    {"coordinates": { "$centerSphere": [ parameters['coordinates'] , parameters['distance'] / 3963.192 ] }},
+                    {"lat": 0.0, "lon": 0.0 }
+                ]
+
+            }
+        ).skip(parameters['offset']).limit(parameters['limit']).sort("time", DESCENDING)
+
+
         data = []
-        parameters['since'] = since
-
-        cur.execute("""
-        select source,source_id,creator,time,location,lat,lon,data
-        from information
-        where source_id in (%(ids)s) and time >= %(since)s and
-        (ST_DWithin(geom, ST_GeomFromText('POINT(%(coordinates)s)',4326), %(distance)s) or lat = 0.0 and lon = 0.0)
-        order by time desc""" % parameters )
-        results = cur.fetchall()
-
-
-        for result in results:
+        for info in results:
             data.append(
                 Information(
-                    result[0],
-                    result[1],
-                    result[2],
-                    result[3],
-                    result[7],
-                    result[4],
-                    result[5],
-                    result[6]
+                    info['source'],
+                    info['id'],
+                    info['creator'],
+                    info['time'],
+                    info['data'],
+                    info['location'],
+                    info['lat'],
+                    info['lon']
                 )
             )
 
-        conn.commit()
-        cur.close()
-        conn.close()
 
         return data

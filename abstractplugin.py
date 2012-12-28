@@ -3,8 +3,8 @@
 import sys
 import datetime
 import riak
-import psycopg2
 import redis
+from pymongo import *
 from config import *
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
@@ -12,6 +12,7 @@ import traceback
 from jobops import process_job_since
 import time
 from processors import simple
+import threading
 
 class AbsPlugin:
 
@@ -22,55 +23,60 @@ class AbsPlugin:
     def execute(self, name, jobs):
         try:
             for job in jobs:
-                data = self.get_data(job)
-                self._insert(data)
-                self._tokenize(data)
+                connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+                db = connection['ken']
+                collection = db['job_data']
+
+                job_data = collection.find_one({"slug": job.slug})
+
+                if job_data is None:
+                    since = job.time
+                else:
+                    since = job_data['since']
+
+                data = self.get_data(job, since)
+                i = threading.Thread(target=self._insert, args=(data,))
+                t = threading.Thread(target=self._tokenize, args=(data,))
+
+                i.start()
+                t.start()
+                i.join()
+                t.join()
+
                 self._reduce(job)
         except:
             print '>>> traceback <<<'
             traceback.print_exc()
             print '>>> end of traceback <<<'
-            client = riak.RiakClient(port=RIAK_PORT)
+            connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+            db = connection['ken']
+            collection = db['errors']
 
-            bucket = client.bucket('error_log')
-            if bucket.search_enabled() is False:
-                bucket.enable_search()
+            now = datetime.datetime.now()
+            collection.insert({'time': str(now), 'error':sys.exc_info()[0], 'stacktrace': traceback.print_exc()})
 
-                now = datetime.datetime.now()
-                value = bucket.new(str(now), data={'time': str(now), 'error':sys.exc_info()[0], 'stacktrace': traceback.print_exc()})
-                value.store()
         print 'end execute: %s' % name
         return name
 
 
 
-    def get_data(self, job):
+    def get_data(self, job, since):
         raise NotImplementedError()
 
 
     def _insert(self, data):
-        conn = None
-        cur = None
         try:
-            conn = psycopg2.connect(POSTGRES_DB_STRING)
-            cur = conn.cursor()
+            connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+            db = connection['ken']
+            collection = db['information']
 
             for item in data:
-
-                cur.execute("""INSERT INTO information(source,source_id,creator,time,location,lat,lon,data,geom)
-                values( %(source)s, %(id)s, %(creator)s, %(time)s, %(location)s, %(lat)s, %(lon)s, %(data)s, ST_GeomFromText(%(geom)s,4326))
-                """, item.to_json())
-
-            conn.commit()
+                if len(collection.find({"source_id": item.id}).limit(1)) is 0:
+                    collection.insert(item.to_json())
         except:
             print '>>> traceback <<<'
             traceback.print_exc()
             print '>>> end of traceback <<<'
-        finally:
-            if cur:
-                cur.close()
-            if conn:
-                conn.close()
 
 
     def _tokenize(self, data):
@@ -101,13 +107,12 @@ class AbsPlugin:
 
 
     def _reduce(self, job):
-        client = riak.RiakClient(host=RIAK_HOST, port=RIAK_PORT)
-        bucket = client.bucket('job_data')
+        connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        db = connection['ken']
+        collection = db['job_data']
 
-        if bucket.search_enabled() is False:
-            bucket.enable_search()
+        job_data = collection.find_one({"slug": job.slug})
 
-        job_data = bucket.get(job.slug).get_data()
         if job_data is None:
             info_json = []
             since = job.time
@@ -127,10 +132,14 @@ class AbsPlugin:
         red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
         red.publish(job.slug, new_info)
 
-        job_data = {'since': int(time.time()), 'information': info_json}
+        job_data = {'slug': job.slug, 'since': int(time.time()), 'information': info_json}
 
-        value = bucket.new(job.slug, data=job_data)
-        value.store()
+        if len(collection.find({"slug": job.slug}).limit(1)) is 0:
+            collection.insert(job_data)
+        else:
+            jobDataFromDB = collection.find_one({"slug": job.slug})
+            job_data['_id'] = jobDataFromDB['_id']
+            collection.update(job_data)
 
 
 
