@@ -2,6 +2,8 @@
 
 from pluginmanager import PluginManager
 import sys
+from pymongo import *
+from config import *
 
 
 class Collector:
@@ -22,5 +24,17 @@ class Collector:
 
 
 if __name__ == "__main__":
+    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+    db = connection['ken']
+
+    collection = db['job_data']
+    collection.ensure_index([('slug', ASCENDING)])
+
+    collection = db['job']
+    collection.ensure_index([('slug', ASCENDING)])
+
+    collection = db['information']
+    collection.ensure_index([('coordinates', GEO2D), ('time', DESCENDING), ('source_id', ASCENDING), ('lat', ASCENDING), ('lon', ASCENDING)])
+
     collector = Collector()
     collector.parse_input()
