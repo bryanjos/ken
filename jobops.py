@@ -48,10 +48,10 @@ def save_job(job):
     dt = time.strptime(job['time'], DATE_FORMAT)
     job['time'] = int(time.strftime('%s',dt))
 
-    if len(collection.find({"slug": job.slug}).limit(1)) is 0:
+    if collection.find_one({"slug": job['slug']}) is None:
         collection.insert(job)
     else:
-        jobFromDB = collection.find({"slug": job.slug}).limit(1)
+        jobFromDB = collection.find({"slug": job['slug']}).limit(1)
         job['_id'] = jobFromDB['_id']
         collection.update(job)
 

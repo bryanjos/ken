@@ -9,7 +9,7 @@ class FacebookPlugin(AbsPlugin):
     def __init__(self):
         pass
 
-    def get_data(self,job):
+    def get_data(self, job, since):
         url = u'https://graph.facebook.com/search?q='
         url = url + ' OR '.join(job.tags)
         url = url + '&type=post'

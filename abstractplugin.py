@@ -15,7 +15,6 @@ from processors import simple
 import threading
 
 class AbsPlugin:
-
     def __call__(self, name, jobs):
         print 'execute: %s' % name
         return self.execute(name, jobs)
@@ -53,11 +52,10 @@ class AbsPlugin:
             collection = db['errors']
 
             now = datetime.datetime.now()
-            collection.insert({'time': str(now), 'error':sys.exc_info()[0], 'stacktrace': traceback.print_exc()})
+            collection.insert({'time': str(now), 'error': sys.exc_info()[0], 'stacktrace': traceback.print_exc()})
 
         print 'end execute: %s' % name
         return name
-
 
 
     def get_data(self, job, since):
@@ -71,7 +69,7 @@ class AbsPlugin:
             collection = db['information']
 
             for item in data:
-                if len(collection.find({"source_id": item.id}).limit(1)) is 0:
+                if collection.find_one({"source_id": item.id}) is None:
                     collection.insert(item.to_json())
         except:
             print '>>> traceback <<<'
@@ -90,10 +88,10 @@ class AbsPlugin:
                 for word in word_tokenize(sentence):
                     if word not in stopwords.words('english') and word not in STOP_WORDS:
                         try:
-                            word = word.encode("utf8","ignore").lower()
+                            word = word.encode("utf8", "ignore").lower()
                             data = bucket.get(word).get_data()
                             if data is None:
-                                data = {'word':word, 'ids': [item.id]}
+                                data = {'word': word, 'ids': [item.id]}
                             else:
                                 data['ids'].append(item.id)
                                 data['ids'] = list(set(data['ids']))
@@ -134,12 +132,12 @@ class AbsPlugin:
 
         job_data = {'slug': job.slug, 'since': int(time.time()), 'information': info_json}
 
-        if len(collection.find({"slug": job.slug}).limit(1)) is 0:
+        if collection.find_one({"slug": job.slug}) is None:
             collection.insert(job_data)
         else:
             jobDataFromDB = collection.find_one({"slug": job.slug})
             job_data['_id'] = jobDataFromDB['_id']
-            collection.update(job_data)
+            collection.update({"slug": job.slug}, job_data)
 
 
 

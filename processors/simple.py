@@ -38,7 +38,7 @@ class SimpleProcessor(AbsProcessor):
             new_ids.append("'%s'" % id)
 
         return {
-            'ids': ids,
+            'ids': list(ids),
             'time': time,
             'coordinates': coordinates if coordinates else None,
             'distance': distance
@@ -46,10 +46,10 @@ class SimpleProcessor(AbsProcessor):
 
     def get_data(self, parameters, page_size, page):
         data = []
-        if len(parameters['ids'].strip()) > 0:
+        if len(parameters['ids']) > 0:
 
-            parameters['limit'] = str(page_size)
-            parameters['offset'] = str((page-1) * page_size)
+            parameters['limit'] = page_size
+            parameters['offset'] = (page-1) * page_size
 
             connection = Connection(MONGODB_HOST, MONGODB_PORT)
             db = connection['ken']
@@ -59,10 +59,13 @@ class SimpleProcessor(AbsProcessor):
                 {
                     "time": {"$gt": parameters['time']},
                     "source_id": {"$in": parameters['ids']},
-                    "$or":[
-                        {"coordinates": { "$centerSphere": [ parameters['coordinates'] , parameters['distance'] / 3963.192 ] }},
-                        {"lat": 0.0, "lon": 0.0 }
-                    ]
+                    "coordinates":
+                         { "$within":
+                              { "$center":
+                                    [ parameters['coordinates'] , parameters['distance'] / 3963.192 ]
+                              }
+                         }
+
 
                 }
             ).skip(parameters['offset']).limit(parameters['limit']).sort("time", DESCENDING)
@@ -95,13 +98,14 @@ class SimpleProcessor(AbsProcessor):
             {
                 "time": {"$gt": since},
                 "source_id": {"$in": parameters['ids']},
-                "$or":[
-                    {"coordinates": { "$centerSphere": [ parameters['coordinates'] , parameters['distance'] / 3963.192 ] }},
-                    {"lat": 0.0, "lon": 0.0 }
-                ]
-
+                "coordinates":
+                    { "$within":
+                          { "$center":
+                                [ parameters['coordinates'] , parameters['distance'] / 3963.192 ]
+                          }
+                    }
             }
-        ).skip(parameters['offset']).limit(parameters['limit']).sort("time", DESCENDING)
+        )
 
 
         data = []
