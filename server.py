@@ -44,7 +44,6 @@ def create():
         message = jobops.validate_job(job)
 
         if message is None:
-            print 'message: %s' % message
             job['slug'] = slugify(job['name'],jobops.get_job_keys())
             jobops.save_job(job)
 
@@ -103,13 +102,11 @@ def job(job_slug, page=1):
     import datetime
     for d in data:
         d.time = datetime.datetime.fromtimestamp(d.time).strftime("%a, %d %b %Y %H:%M:%S +0000")
-        d.data = d.data.decode('ascii','ignore')
         d.coordinate_string = '%s %s' % (d.lat, d.lon) if d.lat > 0.0 and d.lon > 0.0 else ''
 
     if data is None:
         abort(404)
     else:
-        print data
         if request_wants_json():
             return jsonify(data)
         else:

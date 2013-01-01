@@ -58,7 +58,7 @@ class SimpleProcessor(AbsProcessor):
             results = collection.find(
                 {
                     "time": {"$gt": parameters['time']},
-                    "source_id": {"$in": parameters['ids']},
+                    "id": {"$in": parameters['ids']},
                     "coordinates":
                          { "$within":
                               { "$center":
@@ -85,7 +85,31 @@ class SimpleProcessor(AbsProcessor):
                     )
                 )
 
-        return data
+
+            results = collection.find(
+                {
+                    "time": {"$gt": parameters['time']},
+                    "id": {"$in": parameters['ids']},
+                    "lat": 0
+                }
+            ).skip(parameters['offset']).limit(parameters['limit']).sort("time", DESCENDING)
+
+
+            for info in results:
+                data.append(
+                    Information(
+                        info['source'],
+                        info['id'],
+                        info['creator'],
+                        info['time'],
+                        info['data'],
+                        info['location'],
+                        info['lat'],
+                        info['lon']
+                    )
+                )
+
+            return data
 
 
     def get_data_since(self, parameters, since):
@@ -97,7 +121,7 @@ class SimpleProcessor(AbsProcessor):
         results = collection.find(
             {
                 "time": {"$gt": since},
-                "source_id": {"$in": parameters['ids']},
+                "id": {"$in": parameters['ids']},
                 "coordinates":
                     { "$within":
                           { "$center":
@@ -123,5 +147,27 @@ class SimpleProcessor(AbsProcessor):
                 )
             )
 
+
+        results = collection.find(
+            {
+                "time": {"$gt": since},
+                "id": {"$in": parameters['ids']},
+                "lat": 0
+            }
+        )
+
+        for info in results:
+            data.append(
+                Information(
+                    info['source'],
+                    info['id'],
+                    info['creator'],
+                    info['time'],
+                    info['data'],
+                    info['location'],
+                    info['lat'],
+                    info['lon']
+                )
+            )
 
         return data

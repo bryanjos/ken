@@ -4,11 +4,11 @@
      <ul id="items">
         {% for item in data %}
             <li>
-                    <h6>{{item.data}}</h6>
+                    <p><b>{{item.data}}</b></p>
                     <em>Source: {{item.source}}</em>
                     <em>by {{item.creator}}</em>
                     <em>at {{item.time}}</em>
-                    <em > {{item.coordinate_string}}</em>
+                    <em> {{item.coordinate_string}}</em>
                     <div class="margin-bottom-10"></div>
                     <hr/>
             </li>
@@ -25,7 +25,7 @@
         for(var i = 0; i < event.data.length; i++){
             item = event.data[i];
             if(item.data){
-                dataToPrepend = dataToPrepend + '<li><h6>' + item.data + '</h6><em>Source: ' + item.source +
+                dataToPrepend = dataToPrepend + '<li><p><b>' + item.data + '</b></p><em>Source: ' + item.source +
                     '</em><em>by ' + item.creator +
                     '</em><em> at' + item.time + '</em><em>' + item.coordinate_string +
                     '</em><div class="margin-bottom-10"></div><hr/></li>';
