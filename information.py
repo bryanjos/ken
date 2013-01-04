@@ -10,6 +10,9 @@ class Information:
         self.lon = lon
         self.coordinate_string = '' if lat is 0.0 and lon is 0.0 else '%s %s' % (lat, lon)
 
+    def __repr__(self):
+        return repr((self.source, self.id, self.creator, self.time, self.data, self.location, self.lat, self.lon, self.coordinate_string))
+
     def to_json(self):
         return {
             'source': self.source,

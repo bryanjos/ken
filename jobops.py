@@ -11,7 +11,7 @@ def convert_form_to_job(job_form):
         'lat':float(job_form['lat'].strip()) if len(job_form['lat'].strip()) > 0 else None,
         'lon':float(job_form['lon'].strip()) if len(job_form['lon'].strip()) > 0 else None,
         'distance':float(job_form['distance'].strip()) if len(job_form['distance'].strip()) > 0 else 1,
-        'tags': job_form['tags'].strip().split()
+        'tags': job_form['tags'].strip().split(',')
     }
 
 def validate_job(job_json):
