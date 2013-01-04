@@ -66,7 +66,7 @@ class PluginManager:
             pool.close()
             pool.join()
 
-            sorted_info = sorted(self.__job_results[job.slug], key=lambda info: info.time)
+            sorted_info = sorted(self.__job_results[job.slug], key=lambda info: info.time, reverse=True)
 
             #TODO: add NLP to make results more relevant
 
