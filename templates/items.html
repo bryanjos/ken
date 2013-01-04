@@ -20,23 +20,56 @@
     <script src="{{config.STATIC_URL}}js/moment.min.js"></script>
     <script src="{{config.STATIC_URL}}js/EventSource.js"></script>
     <script>
-    var last_date = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss');
-    var source = new EventSource('/stream/{{job_slug}}');
-    source.onmessage = function (event) {
-        data = eval(event.data);
-        console.log(data);
+
+    function prependData(data){
         var dataToPrepend = "";
         for(var i = 0; i < data.length; i++){
             item = data[i];
             if(item.data){
                 dataToPrepend = dataToPrepend + '<li><p><b>' + item.data + '</b></p><em>Source: ' + item.source +
-                    '</em><em> by ' + item.creator +
-                    '</em><em> at ' + moment(item.time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</em><em> ' + item.coordinate_string +
-                    '</em><div class="margin-bottom-10"></div><hr/></li>';
+                        '</em><em> by ' + item.creator +
+                        '</em><em> at ' + moment(item.time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</em><em> ' + item.coordinate_string +
+                        '</em><div class="margin-bottom-10"></div><hr/></li>';
                 last_date = item.time;
             }
         }
         $('#items').prepend(dataToPrepend);
+    }
+
+
+    var last_date = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss');
+    var hasMorePages = true;
+
+
+    $(document).ready(function() {
+        var url = '/job/{{ job_slug }}/previous_to/' + last_date;
+        $.get(url, function(data){
+            if(data.length > 0){
+                prependData(data);
+            }
+        });
+    });
+
+    var source = new EventSource('/stream/{{job_slug}}');
+    source.onmessage = function (event) {
+        data = eval(event.data);
+        console.log(data);
+        prependData(data);
     };
+
+    $(window).scroll(function(){
+        if($(window).scrollTop() == $(document).height() - $(window).height() && hasMorePages){
+            var url = '/job/{{ job_slug }}/previous_to/' + last_date;
+            $.get(url, function(data){
+                if(data.length > 0){
+                    prependData(data);
+                }else{
+                    hasMorePages = false;
+                }
+            });
+        }
+    });
+
+
     </script>
 {% endblock %}

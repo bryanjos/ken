@@ -84,6 +84,7 @@ def get_previous_info(job_slug, time):
         }
     ).limit(30).sort("time", DESCENDING)
 
+
     return jsonify(results)
 
 

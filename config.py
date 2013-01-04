@@ -1,5 +1,3 @@
-RIAK_HOST = 'localhost'
-RIAK_PORT = 8091
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
 REDIS_HOST = 'localhost'
@@ -11,4 +9,4 @@ STATIC_URL = '/static/'
 POLLING_INTERVAL = 60 * 5 #seconds x minutes
 DEBUG = True
 STOP_WORDS = [',','.',';',':']
-VERSION = '2'
+VERSION = '3'
