@@ -17,9 +17,9 @@ class TwitterPlugin(AbsPlugin):
         url = url + '&count=100&lang=en&result_type=recent'
         if job.lat > 0 and job.lon > 0:
             url = url + '&geocode=' + job.lat + ',' + job.lon + ',' + str(job.distance) + 'mi'
-        twit = requests.get(url)
+        response = requests.get(url)
         data = []
-        for tweet in twit.json()['results']:
+        for tweet in response.json['results']:
             date =  time.strptime(tweet['created_at'], '%a, %d %b %Y %H:%M:%S +0000')
             data.append(
                 Information('twitter',

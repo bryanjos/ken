@@ -48,12 +48,12 @@ def save_job(job):
     dt = time.strptime(job['time'], DATE_FORMAT)
     job['time'] = int(time.strftime('%s',dt))
 
-    if collection.find_one({"slug": job['slug']}) is None:
+    jobFromDB = collection.find_one({"slug": job['slug']})
+
+    if jobFromDB is None:
         collection.insert(job)
     else:
-        jobFromDB = collection.find({"slug": job['slug']}).limit(1)
-        job['_id'] = jobFromDB['_id']
-        collection.update(job)
+        collection.update({"slug": job['slug']}, job)
 
 def get_job_keys():
     connection = Connection(MONGODB_HOST, MONGODB_PORT)

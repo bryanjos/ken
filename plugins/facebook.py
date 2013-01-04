@@ -11,14 +11,16 @@ class FacebookPlugin(AbsPlugin):
 
     def get_data(self, job, since):
         url = u'https://graph.facebook.com/search?q='
-        url = url + ' OR '.join(job.tags)
+        url = url + ' '.join(job.tags)
+        url = url + '&since=' + str(since)
         url = url + '&type=post'
         if job.lat > 0 and job.lon > 0:
             url = url + '&center=' + job.lat + ',' + job.lon
             url = url + '&distance=' + job.distance
+        print url
         response = requests.get(url)
         data = []
-        for item in response.json()['data']:
+        for item in response.json['data']:
             date =  time.strptime(item['created_time'], '%Y-%m-%dT%H:%M:%S+0000')
             data.append(
                 Information('facebook',

@@ -4,6 +4,7 @@ from plugins import __all__
 import multiprocessing as mp
 import time
 import redis
+from pymongo import *
 from config import *
 
 
@@ -27,10 +28,6 @@ class PluginManager:
             self.__plugins[plugin_name] = plugin
         return plugin
 
-    def update_queue(self, q):
-        for name in sorted(__all__):
-            q.put(name)
-
     #Intent is for when interval is hit, then
     #poll for plugins that have finished and don't run those that aren't yet
     def call(self):
@@ -44,8 +41,8 @@ class PluginManager:
         for name in list_plugins():
             print name
 
-    def do_callback(self,job_slug, data):
-        self.__job_results[job_slug].extend(data)
+    def do_callback(self, data):
+        self.__job_results[data[0]].extend(data[1])
 
 
     def do(self):
@@ -55,23 +52,35 @@ class PluginManager:
 
         for job in jobs:
             self.__job_results[job.slug] = []
-            q = mp.Queue(maxsize=len(list_plugins()))
-            self.update_queue(q)
 
-            while q.empty() is False:
-                name = q.get()
+            for name in sorted(__all__):
                 plugin = self.load_plugin(name)
                 print 'Starting polling for %s' % name
-                pool.apply_async(plugin, args = (name, job), callback=self.do_callback)
+                pool.apply_async(plugin, args = (job,), callback=self.do_callback)
             pool.close()
             pool.join()
 
+            self.update_time(job)
             sorted_info = sorted(self.__job_results[job.slug], key=lambda info: info.time, reverse=True)
 
             #TODO: add NLP to make results more relevant
 
             red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
             red.publish(job.slug, sorted_info)
+
+
+    def update_time(self, job):
+        connection = Connection(MONGODB_HOST, MONGODB_PORT)
+        db = connection['ken']
+        collection = db['job_data']
+
+        job_data = {'slug': job.slug, 'since': int(time.time()) }
+        jobDataFromDB = collection.find_one({"slug": job.slug})
+
+        if jobDataFromDB is None:
+            collection.insert(job_data)
+        else:
+            collection.update({"slug": job.slug}, job_data)
 
 
 def list_plugins():
