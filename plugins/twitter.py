@@ -2,7 +2,6 @@
 
 from abstractplugin import AbsPlugin
 import requests
-import time
 import datetime
 from information import Information
 
@@ -20,13 +19,13 @@ class TwitterPlugin(AbsPlugin):
         response = requests.get(url)
         data = []
         for tweet in response.json['results']:
-            date =  time.strptime(tweet['created_at'], '%a, %d %b %Y %H:%M:%S +0000')
             data.append(
                 Information('twitter',
                     tweet['id_str'],
                     tweet['from_user'],
-                    int(time.strftime('%s',date)),
+                    datetime.datetime.strptime(tweet['created_at'], '%a, %d %b %Y %H:%M:%S +0000').strftime('%Y-%m-%dT%H:%M:%S'),
                     tweet['text'],
+                    job.slug,
                     location = u'',
                     lat = tweet['geo']['coordinates'][0] if tweet['geo'] and 'coordinates' in tweet['geo'] else 0.0,
                     lon = tweet['geo']['coordinates'][1] if tweet['geo'] and 'coordinates' in tweet['geo'] else 0.0)

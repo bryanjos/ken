@@ -17,18 +17,23 @@
 {% endblock %}
 {% block js %}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="{{config.STATIC_URL}}js/moment.min.js"></script>
     <script src="{{config.STATIC_URL}}js/EventSource.js"></script>
     <script>
+    var last_date = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss');
     var source = new EventSource('/stream/{{job_slug}}');
     source.onmessage = function (event) {
+        data = eval(event.data);
+        console.log(data);
         var dataToPrepend = "";
-        for(var i = 0; i < event.data.length; i++){
-            item = event.data[i];
+        for(var i = 0; i < data.length; i++){
+            item = data[i];
             if(item.data){
                 dataToPrepend = dataToPrepend + '<li><p><b>' + item.data + '</b></p><em>Source: ' + item.source +
-                    '</em><em>by ' + item.creator +
-                    '</em><em> at' + item.time + '</em><em>' + item.coordinate_string +
+                    '</em><em> by ' + item.creator +
+                    '</em><em> at ' + moment(item.time).format("dddd, MMMM Do YYYY, h:mm:ss a") + '</em><em> ' + item.coordinate_string +
                     '</em><div class="margin-bottom-10"></div><hr/></li>';
+                last_date = item.time;
             }
         }
         $('#items').prepend(dataToPrepend);

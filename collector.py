@@ -27,11 +27,14 @@ if __name__ == "__main__":
     connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
 
-    collection = db['job_data']
-    collection.ensure_index([('slug', ASCENDING)])
-
     collection = db['job']
     collection.ensure_index([('slug', ASCENDING)])
+
+    collection = db['job_metadata']
+    collection.ensure_index([('slug', ASCENDING)])
+
+    collection = db['job_info']
+    collection.ensure_index([('job_slug', ASCENDING), ('time', DESCENDING)])
 
     collector = Collector()
     collector.parse_input()

@@ -1,17 +1,20 @@
+import json
+
 class Information:
-    def __init__(self, source, id, creator, unix_time, data, location=u'', lat=0.0, lon=0.0):
+    def __init__(self, source, id, creator, time, data, job_slug, location=u'', lat=0.0, lon=0.0):
         self.source = source
         self.id = id
         self.creator = creator
-        self.time = unix_time
+        self.time = time
         self.data = data
         self.location = location
         self.lat = lat
         self.lon = lon
-        self.coordinate_string = '' if lat is 0.0 and lon is 0.0 else '%s %s' % (lat, lon)
+        self.coordinate_string = '' if lat == 0 and lon == 0 else '%s %s' % (lat, lon)
+        self.job_slug = job_slug
 
     def __repr__(self):
-        return repr((self.source, self.id, self.creator, self.time, self.data, self.location, self.lat, self.lon, self.coordinate_string))
+        return json.dumps(self.__dict__)
 
     def to_json(self):
         return {
@@ -23,6 +26,7 @@ class Information:
             'location':self.location,
             'lat': float(self.lat),
             'lon': float(self.lon),
-            'coordinates': { 'x':float(self.lon), 'y': float(self.lat)}
+            'coordinates': { 'x':float(self.lon), 'y': float(self.lat)},
+            'job_slug' : self.job_slug
         }
 

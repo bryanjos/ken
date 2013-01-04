@@ -68,11 +68,13 @@ class PluginManager:
             red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
             red.publish(job.slug, sorted_info)
 
+            self.save_data(sorted_info)
+
 
     def update_time(self, job):
         connection = Connection(MONGODB_HOST, MONGODB_PORT)
         db = connection['ken']
-        collection = db['job_data']
+        collection = db['job_metadata']
 
         job_data = {'slug': job.slug, 'since': int(time.time()) }
         jobDataFromDB = collection.find_one({"slug": job.slug})
@@ -81,6 +83,17 @@ class PluginManager:
             collection.insert(job_data)
         else:
             collection.update({"slug": job.slug}, job_data)
+
+    def save_data(self, data):
+        connection = Connection(MONGODB_HOST, MONGODB_PORT)
+        db = connection['ken']
+        collection = db['job_info']
+
+        for item in data:
+            itemFromDB = collection.find_one({"id": item.id})
+            if itemFromDB is None:
+                collection.insert(item.__dict__)
+
 
 
 def list_plugins():

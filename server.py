@@ -5,6 +5,7 @@ from pluginmanager import list_plugins
 from config import *
 from serverops import *
 import redis
+from pymongo import *
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -68,6 +69,22 @@ def edit(job_slug = None):
             return render_template('edit.html', sources=sources, job=job)
         else:
             return render_template('edit.html', sources=sources, job=None)
+
+
+@app.route('/jobs/<job_slug>/previous_to/<time>')
+def get_previous_info(job_slug, time):
+    connection = Connection(MONGODB_HOST, MONGODB_PORT)
+    db = connection['ken']
+    collection = db['job_info']
+
+    results = collection.find(
+        {
+            "time": {"$lt": time },
+            "job_slug": job_slug
+        }
+    ).limit(30).sort("time", DESCENDING)
+
+    return jsonify(results)
 
 
 @app.route('/jobs/<job_slug>')

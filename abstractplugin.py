@@ -15,7 +15,7 @@ class AbsPlugin:
         try:
             connection = Connection(MONGODB_HOST, MONGODB_PORT)
             db = connection['ken']
-            collection = db['job_data']
+            collection = db['job_metadata']
 
             job_data = collection.find_one({"slug": job.slug})
 

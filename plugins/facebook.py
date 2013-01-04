@@ -2,7 +2,7 @@
 
 from abstractplugin import AbsPlugin
 import requests
-import time
+import datetime
 from information import Information
 
 class FacebookPlugin(AbsPlugin):
@@ -21,13 +21,13 @@ class FacebookPlugin(AbsPlugin):
         response = requests.get(url)
         data = []
         for item in response.json['data']:
-            date =  time.strptime(item['created_time'], '%Y-%m-%dT%H:%M:%S+0000')
             data.append(
                 Information('facebook',
                     item['id'],
                     item['from']['name'],
-                    int(time.strftime('%s',date)),
+                    datetime.datetime.strptime(item['created_time'], '%Y-%m-%dT%H:%M:%S+0000').strftime('%Y-%m-%dT%H:%M:%S'),
                     item['message'],
+                    job.slug,
                     location = u'',
                     lat = 0.0,
                     lon = 0.0)
