@@ -5,12 +5,10 @@ Collects information from various sources based on defined criteria and aggregat
 
 Requirements:
 
-	riak
-	postgres
+    mongodb
 	redis
-	nltk
-	riak python client
-	psycopg2
+	pymongo
+	redis.py
 	requests
 	flask
 
@@ -20,7 +18,7 @@ I took a first shot at an install script minus database installation for OS X us
 Contains 2 Parts. The Collector and the Server
 
 
-The Collector periodically goes out to the sources defined in the plugins folder (more on this later), gets data defined by the jobs in the system, puts the data in the database and indexes key words from the data.
+The Collector periodically goes out to the sources defined in the plugins folder (more on this later), gets data defined by the jobs in the system, publishes new data and stores it for later consumption.
 
 Sources are defined in the plugins folder. Plugins must implement the AbsPlugin class's get_data function.
 
