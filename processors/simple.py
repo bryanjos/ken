@@ -5,4 +5,7 @@ class SimpleProcessor(AbsProcessor):
         pass
 
     def process(self, job, data):
-        pass
+        return data
+
+def load():
+    return SimpleProcessor()

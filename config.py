@@ -10,3 +10,4 @@ POLLING_INTERVAL = 60 * 5 #seconds x minutes
 DEBUG = True
 STOP_WORDS = [',','.',';',':']
 VERSION = '3'
+PROCESSOR_NAME = 'simple'

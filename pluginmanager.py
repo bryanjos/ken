@@ -15,6 +15,7 @@ class PluginManager:
         """ Initialize the plugin list """
         self.__plugins = {}
         self.__job_results = {}
+        self.__processor = None
 
     def load_plugin(self, plugin_name):
         """ Loads a single plugin given its name """
@@ -28,6 +29,17 @@ class PluginManager:
             plugin = module.load()
             self.__plugins[plugin_name] = plugin
         return plugin
+
+    def load_processor(self):
+        if self.__processor is None:
+            module = __import__("processors." + PROCESSOR_NAME, fromlist=["processors"])
+            processor = module.load()
+            self.__processor = processor
+        else:
+            processor = self.__processor
+
+        return processor
+
 
     #Intent is for when interval is hit, then
     #poll for plugins that have finished and don't run those that aren't yet
@@ -69,15 +81,12 @@ class PluginManager:
         sorted_info = sorted(job_results, key=lambda info: info.time, reverse=True)
 
         #TODO: add NLP to make results more relevant
+        processed_data = self.load_processor().process(job, sorted_info)
 
         red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-        red.publish(job.slug, sorted_info)
+        red.publish(job.slug, processed_data)
 
-        self.save_data(sorted_info)
-
-
-
-
+        self.save_data(processed_data)
 
 
     def update_time(self, job):
