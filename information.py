@@ -14,7 +14,7 @@ class Information:
         self.job_slug = job_slug
 
     def __repr__(self):
-        return json.dumps(self.__dict__)
+        return json.dumps(self.__dict__, cls=JSONEncoder)
 
     def to_json(self):
         return {
@@ -29,4 +29,12 @@ class Information:
             'coordinates': { 'x':float(self.lon), 'y': float(self.lat)},
             'job_slug' : self.job_slug
         }
+
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'isoformat'): #handles both date and datetime objects
+            return obj.strftime('%Y-%m-%dT%H:%M:%S+00:00')
+        else:
+            return json.JSONEncoder.default(self, obj)
 

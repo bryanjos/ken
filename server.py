@@ -71,11 +71,12 @@ def edit(job_slug = None):
             return render_template('edit.html', sources=sources, job=None)
 
 
-@app.route('/jobs/<job_slug>/previous_to/<time>')
-def get_previous_info(job_slug, time):
+@app.route('/jobs/previous/<job_slug>', methods=['POST'])
+def get_previous_info(job_slug):
     connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
     collection = db['job_info']
+    time = datetime.datetime.strptime(request.form['time'], '%Y-%m-%dT%H:%M:%S+00:00')
 
     results = collection.find(
         {
@@ -84,8 +85,20 @@ def get_previous_info(job_slug, time):
         }
     ).limit(30).sort("time", DESCENDING)
 
+    data = []
 
-    return jsonify(results)
+    for item in results:
+        data.append({
+            'source': item['source'],
+            'creator': item['creator'],
+            'time': item['time'].strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+            'data': item['data'],
+            'coordinate_string': item['coordinate_string']
+        })
+
+    print 'data: %s' % json.dumps(data)
+
+    return json.dumps(data)
 
 
 @app.route('/jobs/<job_slug>')

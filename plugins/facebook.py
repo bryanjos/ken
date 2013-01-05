@@ -25,7 +25,7 @@ class FacebookPlugin(AbsPlugin):
                 Information('facebook',
                     item['id'],
                     item['from']['name'],
-                    datetime.datetime.strptime(item['created_time'], '%Y-%m-%dT%H:%M:%S+0000').strftime('%Y-%m-%dT%H:%M:%S'),
+                    datetime.datetime.strptime(item['created_time'], '%Y-%m-%dT%H:%M:%S+0000'),
                     item['message'],
                     job.slug,
                     location = u'',

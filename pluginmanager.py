@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from plugins import __all__
+
 import multiprocessing as mp
 import time
 import redis
@@ -60,15 +61,23 @@ class PluginManager:
             pool.close()
             pool.join()
 
-            self.update_time(job)
-            sorted_info = sorted(self.__job_results[job.slug], key=lambda info: info.time, reverse=True)
+            self.process_results(job, self.__job_results[job.slug])
 
-            #TODO: add NLP to make results more relevant
 
-            red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-            red.publish(job.slug, sorted_info)
+    def process_results(self, job, job_results):
+        self.update_time(job)
+        sorted_info = sorted(job_results, key=lambda info: info.time, reverse=True)
 
-            self.save_data(sorted_info)
+        #TODO: add NLP to make results more relevant
+
+        red = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+        red.publish(job.slug, sorted_info)
+
+        self.save_data(sorted_info)
+
+
+
+
 
 
     def update_time(self, job):

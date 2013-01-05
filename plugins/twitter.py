@@ -23,7 +23,7 @@ class TwitterPlugin(AbsPlugin):
                 Information('twitter',
                     tweet['id_str'],
                     tweet['from_user'],
-                    datetime.datetime.strptime(tweet['created_at'], '%a, %d %b %Y %H:%M:%S +0000').strftime('%Y-%m-%dT%H:%M:%S'),
+                    datetime.datetime.strptime(tweet['created_at'], '%a, %d %b %Y %H:%M:%S +0000'),
                     tweet['text'],
                     job.slug,
                     location = u'',
