@@ -69,7 +69,11 @@ class PluginManager:
             for name in sorted(__all__):
                 plugin = self.load_plugin(name)
                 print 'Starting polling for %s' % name
-                pool.apply_async(plugin, args = (job,), callback=self.do_callback)
+                if 'rss' in name:
+                    for feed in RSS_FEEDS:
+                        pool.apply_async(plugin, args = (job,feed,), callback=self.do_callback)
+                else:
+                    pool.apply_async(plugin, args = (job,), callback=self.do_callback)
             pool.close()
             pool.join()
 

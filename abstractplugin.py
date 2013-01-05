@@ -7,7 +7,8 @@ from config import *
 import traceback
 
 class AbsPlugin:
-    def __call__(self, job):
+    def __call__(self, job, extra_data=None):
+        self.set_extra_data(extra_data)
         return self.execute(job)
 
     def execute(self, job):
@@ -41,6 +42,9 @@ class AbsPlugin:
 
     def get_data(self, job, since):
         raise NotImplementedError()
+
+    def set_extra_data(self, data):
+        pass
 
 
 
