@@ -6,6 +6,8 @@ from config import *
 import re
 import redis
 from pymongo import *
+from urlparse import urljoin
+from werkzeug.contrib.atom import AtomFeed
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -99,6 +101,44 @@ def edit(job_slug = None):
             return render_template('edit.html', sources=sources, job=None)
 
 
+def make_external(url):
+    return urljoin(request.url_root, url)
+
+@app.route('/<job_slug>.atom')
+@app.route('/<job_slug>.atom/<time>')
+def job_feed(job_slug,time=None):
+    connection = Connection(MONGODB_HOST, MONGODB_PORT)
+    db = connection['ken']
+    collection = db['job_info']
+    job = jobops.get_job(job_slug)
+    feed = AtomFeed(job.name, feed_url=request.url, url=request.url_root)
+
+    if time is None:
+        articles = collection.find(
+            {
+                "job_slug": job_slug
+            }
+        ).limit(PAGE_COUNT).sort("time", DESCENDING)
+    else:
+        time = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
+        articles = collection.find(
+            {
+                "time": {"$lt": time },
+                "job_slug": job_slug
+            }
+        ).limit(PAGE_COUNT).sort("time", DESCENDING)
+
+    for article in articles:
+        feed.add(article['data'][:10] + '...', unicode(article['data']),
+            content_type='html',
+            author=article['source'] + '/' + article['creator'],
+            id=article['id'],
+            url='',
+            updated=article['time'],
+            published=article['time'])
+    return feed.get_response()
+
+
 @app.route('/jobs/previous/<job_slug>', methods=['POST'])
 def get_previous_info(job_slug):
     connection = Connection(MONGODB_HOST, MONGODB_PORT)
@@ -111,7 +151,7 @@ def get_previous_info(job_slug):
             "time": {"$lt": time },
             "job_slug": job_slug
         }
-    ).limit(30).sort("time", DESCENDING)
+    ).limit(PAGE_COUNT).sort("time", DESCENDING)
 
     data = []
 

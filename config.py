@@ -13,3 +13,5 @@ DEBUG = True
 STOP_WORDS = [',','.',';',':']
 VERSION = '3'
 PROCESSOR_NAME = 'simple'
+DATE_FORMAT = ''
+PAGE_COUNT = 50
