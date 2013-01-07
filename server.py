@@ -6,8 +6,7 @@ from config import *
 import re
 import redis
 from pymongo import *
-from urlparse import urljoin
-from geo_atom import GeoAtomFeed, GeoFeedEntry
+from geo_atom import GeoAtomFeed
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -100,34 +99,12 @@ def edit(job_slug = None):
         else:
             return render_template('edit.html', sources=sources, job=None)
 
-
-def make_external(url):
-    return urljoin(request.url_root, url)
-
 @app.route('/<job_slug>.atom')
 @app.route('/<job_slug>.atom/<time>')
 def job_feed(job_slug,time=None):
-    connection = Connection(MONGODB_HOST, MONGODB_PORT)
-    db = connection['ken']
-    collection = db['job_info']
     job = jobops.get_job(job_slug)
     feed = GeoAtomFeed(job.name, feed_url=request.url, url=request.url_root )
-
-    if time is None:
-        articles = collection.find(
-            {
-                "job_slug": job_slug
-            }
-        ).limit(PAGE_COUNT).sort("time", DESCENDING)
-    else:
-        time = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
-        articles = collection.find(
-            {
-                "time": {"$lt": time },
-                "job_slug": job_slug
-            }
-        ).limit(PAGE_COUNT).sort("time", DESCENDING)
-
+    articles = get_data(job_slug, time)
     for article in articles:
         if len(article['coordinate_string']) > 0:
             lat_lon = [str(article['coordinates']['lat']), str(article['coordinates']['lon'])]
@@ -146,19 +123,33 @@ def job_feed(job_slug,time=None):
     return feed.get_response()
 
 
-@app.route('/jobs/previous/<job_slug>', methods=['POST'])
-def get_previous_info(job_slug):
+def get_data(job_slug, time=None):
     connection = Connection(MONGODB_HOST, MONGODB_PORT)
     db = connection['ken']
     collection = db['job_info']
+
+    if time is None:
+        articles = collection.find(
+            {
+                "job_slug": job_slug
+            }
+        ).limit(PAGE_COUNT).sort("time", DESCENDING)
+    else:
+        time = datetime.datetime.strptime(time, '%Y-%m-%dT%H:%M:%SZ')
+        articles = collection.find(
+            {
+                "time": {"$lt": time },
+                "job_slug": job_slug
+            }
+        ).limit(PAGE_COUNT).sort("time", DESCENDING)
+
+    return articles
+
+@app.route('/jobs/previous/<job_slug>', methods=['POST'])
+def get_previous_info(job_slug):
     time = datetime.datetime.strptime(request.form['time'], '%Y-%m-%dT%H:%M:%S+00:00')
 
-    results = collection.find(
-        {
-            "time": {"$lt": time },
-            "job_slug": job_slug
-        }
-    ).limit(PAGE_COUNT).sort("time", DESCENDING)
+    results = get_data(job_slug, time)
 
     data = []
 

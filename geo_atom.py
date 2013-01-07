@@ -340,7 +340,7 @@ class GeoFeedEntry(object):
             yield u'  ' + _make_text_block('content', self.content,
                 self.content_type)
         if self.lat_lon:
-            yield u'    <georss:point>%s</georss:point>\n' % escape(' '.join(self.lat_lon))
+            yield u'  <georss:point>%s</georss:point>\n' % escape(' '.join(self.lat_lon))
         yield u'</entry>\n'
 
     def to_string(self):
