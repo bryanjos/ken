@@ -1,5 +1,8 @@
 {% extends "layout.html" %}
 {% block title %}{{job_name}}{% endblock %}
+{% block css %}
+<link href="/{{ job_slug }}.atom" rel="alternate" title="{{ job_name }}" type="application/atom+xml">
+{% endblock %}
 {% block body %}
      <ul id="items">
         {% for item in data %}

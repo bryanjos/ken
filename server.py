@@ -7,7 +7,7 @@ import re
 import redis
 from pymongo import *
 from urlparse import urljoin
-from werkzeug.contrib.atom import AtomFeed
+from geo_atom import GeoAtomFeed, GeoFeedEntry
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -111,7 +111,7 @@ def job_feed(job_slug,time=None):
     db = connection['ken']
     collection = db['job_info']
     job = jobops.get_job(job_slug)
-    feed = AtomFeed(job.name, feed_url=request.url, url=request.url_root)
+    feed = GeoAtomFeed(job.name, feed_url=request.url, url=request.url_root )
 
     if time is None:
         articles = collection.find(
@@ -129,13 +129,20 @@ def job_feed(job_slug,time=None):
         ).limit(PAGE_COUNT).sort("time", DESCENDING)
 
     for article in articles:
+        if len(article['coordinate_string']) > 0:
+            lat_lon = [str(article['coordinates']['lat']), str(article['coordinates']['lon'])]
+        else:
+            lat_lon = None
+
         feed.add(article['data'][:10] + '...', unicode(article['data']),
             content_type='html',
             author=article['source'] + '/' + article['creator'],
             id=article['id'],
             url='',
             updated=article['time'],
-            published=article['time'])
+            published=article['time'],
+            lat_lon=lat_lon)
+    Response.content_type = 'application/atom+xml; charset=utf-8'
     return feed.get_response()
 
 
